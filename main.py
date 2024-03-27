@@ -21,6 +21,14 @@ class MainWindow(QMainWindow):
             self.mouse_pressed = True
             self.last_pos = event.pos()
 
+            x1, y1 = 640, 290  # Пример координат левого верхнего угла области
+            x2, y2 = 640 + 601, 290 + 251  # Пример координат правого нижнего угла области
+
+            if (x1 <= event.x() <= x2 and y1 <= event.y() <= y2):
+                self.inside_area = True
+            else:
+                self.inside_area = False
+
     def mouseReleaseEvent(self, event):
         if event.button() == Qt.LeftButton:
             self.mouse_pressed = False
@@ -33,16 +41,9 @@ class MainWindow(QMainWindow):
             x1, y1 = 640, 290  # Пример координат левого верхнего угла области
             x2, y2 = 640 + 601, 290 + 251  # Пример координат правого нижнего угла области
 
-            if (x1 <= event.x() <= x2 and y1 <= event.y() <= y2):
-                self.inside_area = True
-            else:
-                self.inside_area = False
-
-            if self.inside_area or self.inside_area and (x1 <= event.x() <= x2 and y1 <= event.y() <= y2):
+            if self.mouse_pressed and self.inside_area or (x1 <= event.x() <= x2 and y1 <= event.y() <= y2):
                 self.scrollArea.horizontalScrollBar().setValue(new_value)
-                self.inside_area = True
-            else:
-                self.inside_area = False
+
 
             self.last_pos = event.pos()
 
