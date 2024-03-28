@@ -79,6 +79,9 @@ border-radius: 15px;</string>
         <height>241</height>
        </rect>
       </property>
+      <property name="styleSheet">
+       <string notr="true">border: none;</string>
+      </property>
       <property name="verticalScrollBarPolicy">
        <enum>Qt::ScrollBarAlwaysOff</enum>
       </property>
@@ -1119,10 +1122,13 @@ border-radius: 15px;</string>
       <property name="geometry">
        <rect>
         <x>620</x>
-        <y>40</y>
+        <y>0</y>
         <width>641</width>
         <height>241</height>
        </rect>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">border: none;</string>
       </property>
       <property name="verticalScrollBarPolicy">
        <enum>Qt::ScrollBarAlwaysOff</enum>
@@ -2251,9 +2257,9 @@ border-radius: 15px;</string>
       <widget class="QLabel" name="date">
        <property name="geometry">
         <rect>
-         <x>353</x>
+         <x>303</x>
          <y>480</y>
-         <width>241</width>
+         <width>291</width>
          <height>52</height>
         </rect>
        </property>
@@ -2266,8 +2272,8 @@ border-radius: 15px;</string>
         <rect>
          <x>0</x>
          <y>390</y>
-         <width>171</width>
-         <height>121</height>
+         <width>206</width>
+         <height>136</height>
         </rect>
        </property>
        <layout class="QGridLayout" name="gridLayout_21">
@@ -2275,14 +2281,14 @@ border-radius: 15px;</string>
          <widget class="QLabel" name="label">
           <property name="minimumSize">
            <size>
-            <width>50</width>
-            <height>50</height>
+            <width>64</width>
+            <height>64</height>
            </size>
           </property>
           <property name="maximumSize">
            <size>
-            <width>50</width>
-            <height>50</height>
+            <width>64</width>
+            <height>64</height>
            </size>
           </property>
           <property name="styleSheet">
@@ -2290,7 +2296,10 @@ border-radius: 15px;</string>
 border-radius: 5px;</string>
           </property>
           <property name="text">
-           <string>TextLabel</string>
+           <string/>
+          </property>
+          <property name="pixmap">
+           <pixmap>icons/free-icon-wind-2011448.png</pixmap>
           </property>
          </widget>
         </item>
@@ -2298,14 +2307,14 @@ border-radius: 5px;</string>
          <widget class="QLabel" name="label_5">
           <property name="minimumSize">
            <size>
-            <width>50</width>
-            <height>50</height>
+            <width>64</width>
+            <height>64</height>
            </size>
           </property>
           <property name="maximumSize">
            <size>
-            <width>50</width>
-            <height>50</height>
+            <width>64</width>
+            <height>64</height>
            </size>
           </property>
           <property name="styleSheet">
@@ -2321,14 +2330,14 @@ border-radius: 5px;</string>
          <widget class="QLabel" name="label_2">
           <property name="minimumSize">
            <size>
-            <width>50</width>
-            <height>50</height>
+            <width>64</width>
+            <height>64</height>
            </size>
           </property>
           <property name="maximumSize">
            <size>
-            <width>50</width>
-            <height>50</height>
+            <width>64</width>
+            <height>64</height>
            </size>
           </property>
           <property name="styleSheet">
@@ -2336,7 +2345,10 @@ border-radius: 5px;</string>
 border-radius: 5px;</string>
           </property>
           <property name="text">
-           <string>TextLabel</string>
+           <string/>
+          </property>
+          <property name="pixmap">
+           <pixmap>icons/free-icon-barometer-3093409.png</pixmap>
           </property>
          </widget>
         </item>
@@ -2344,14 +2356,14 @@ border-radius: 5px;</string>
          <widget class="QLabel" name="label_4">
           <property name="minimumSize">
            <size>
-            <width>50</width>
-            <height>50</height>
+            <width>64</width>
+            <height>64</height>
            </size>
           </property>
           <property name="maximumSize">
            <size>
-            <width>50</width>
-            <height>50</height>
+            <width>64</width>
+            <height>64</height>
            </size>
           </property>
           <property name="styleSheet">
@@ -2367,14 +2379,14 @@ border-radius: 5px;</string>
          <widget class="QLabel" name="label_6">
           <property name="minimumSize">
            <size>
-            <width>50</width>
-            <height>50</height>
+            <width>64</width>
+            <height>64</height>
            </size>
           </property>
           <property name="maximumSize">
            <size>
-            <width>50</width>
-            <height>50</height>
+            <width>64</width>
+            <height>64</height>
            </size>
           </property>
           <property name="styleSheet">
@@ -2390,14 +2402,14 @@ border-radius: 5px;</string>
          <widget class="QLabel" name="label_3">
           <property name="minimumSize">
            <size>
-            <width>50</width>
-            <height>50</height>
+            <width>64</width>
+            <height>64</height>
            </size>
           </property>
           <property name="maximumSize">
            <size>
-            <width>50</width>
-            <height>50</height>
+            <width>64</width>
+            <height>64</height>
            </size>
           </property>
           <property name="styleSheet">
@@ -2405,7 +2417,10 @@ border-radius: 5px;</string>
 border-radius: 5px;</string>
           </property>
           <property name="text">
-           <string>TextLabel</string>
+           <string/>
+          </property>
+          <property name="pixmap">
+           <pixmap>icons/free-icon-humidity-1975551.png</pixmap>
           </property>
          </widget>
         </item>
@@ -2414,6 +2429,106 @@ border-radius: 5px;</string>
      </widget>
     </widget>
     <widget class="QWidget" name="page_2"/>
+   </widget>
+   <widget class="QWidget" name="horizontalLayoutWidget">
+    <property name="geometry">
+     <rect>
+      <x>40</x>
+      <y>580</y>
+      <width>1201</width>
+      <height>141</height>
+     </rect>
+    </property>
+    <layout class="QHBoxLayout" name="horizontalLayout_3">
+     <item>
+      <widget class="QLabel" name="label_90">
+       <property name="minimumSize">
+        <size>
+         <width>128</width>
+         <height>128</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>128</width>
+         <height>128</height>
+        </size>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+       <property name="pixmap">
+        <pixmap>icons/free-icon-home-1946436.png</pixmap>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLabel" name="label_9">
+       <property name="minimumSize">
+        <size>
+         <width>128</width>
+         <height>128</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>128</width>
+         <height>128</height>
+        </size>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+       <property name="pixmap">
+        <pixmap>icons/free-icon-search-2997940.png</pixmap>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLabel" name="label_8">
+       <property name="minimumSize">
+        <size>
+         <width>128</width>
+         <height>128</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>128</width>
+         <height>128</height>
+        </size>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+       <property name="pixmap">
+        <pixmap>icons/free-icon-plus-1828921.png</pixmap>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLabel" name="label_7">
+       <property name="minimumSize">
+        <size>
+         <width>128</width>
+         <height>128</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>128</width>
+         <height>128</height>
+        </size>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+       <property name="pixmap">
+        <pixmap>icons/free-icon-profile-4042565.png</pixmap>
+       </property>
+      </widget>
+     </item>
+    </layout>
    </widget>
   </widget>
  </widget>

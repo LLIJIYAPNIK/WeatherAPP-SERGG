@@ -2,6 +2,21 @@ import sys
 from PyQt5 import QtCore, uic
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QMainWindow, QApplication
+import sqlite3
+import requests
+
+connection = sqlite3.connect('cities.db')
+cur = connection.cursor()
+
+access_key = '251f5b1c-ba22-4437-a2fe-86a9428986fe'
+
+headers = {
+    'X-Yandex-Weather-Key': access_key
+}
+
+response = requests.get('https://api.weather.yandex.ru/v2/forecast?lat=52.37125&lon=4.89388', headers=headers)
+
+print(response.json())
 
 
 class MainWindow(QMainWindow):
@@ -29,7 +44,6 @@ class MainWindow(QMainWindow):
             # Координаты
             x1_, y1_ = 620, 40  # Пример координат левого верхнего угла области
             x2_, y2_ = 620 + 641, 40 + 241  # Пример координат правого нижнего угла области
-
 
             if (x1 <= event.x() <= x2 and y1 <= event.y() <= y2):
                 self.inside_area_future = True
