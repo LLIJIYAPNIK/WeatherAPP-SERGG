@@ -67,7 +67,7 @@ border-radius: 15px;</string>
      <string notr="true">background-color: #151515;</string>
     </property>
     <property name="currentIndex">
-     <number>3</number>
+     <number>0</number>
     </property>
     <widget class="QWidget" name="main_page">
      <property name="styleSheet">
@@ -2240,8 +2240,14 @@ border-radius: 15px;</string>
          <height>256</height>
         </size>
        </property>
+       <property name="styleSheet">
+        <string notr="true">background-color: rgba(255, 255, 255, 0);</string>
+       </property>
        <property name="text">
         <string/>
+       </property>
+       <property name="pixmap">
+        <pixmap>weather-icons/WeatherIcon - 1-32 (1).png</pixmap>
        </property>
       </widget>
       <widget class="QLabel" name="description">
