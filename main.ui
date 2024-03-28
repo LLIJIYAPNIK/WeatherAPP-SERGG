@@ -63,8 +63,11 @@ border-radius: 15px;</string>
       <height>581</height>
      </rect>
     </property>
+    <property name="styleSheet">
+     <string notr="true">background-color: #151515;</string>
+    </property>
     <property name="currentIndex">
-     <number>0</number>
+     <number>3</number>
     </property>
     <widget class="QWidget" name="main_page">
      <property name="styleSheet">
@@ -2428,20 +2431,41 @@ border-radius: 5px;</string>
       </widget>
      </widget>
     </widget>
+    <widget class="QWidget" name="search_page">
+     <widget class="QLineEdit" name="search_le">
+      <property name="geometry">
+       <rect>
+        <x>80</x>
+        <y>20</y>
+        <width>1131</width>
+        <height>51</height>
+       </rect>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">background-color: rgba(255, 255, 255, 100);
+border: none;
+border-radius: 8px;</string>
+      </property>
+      <property name="placeholderText">
+       <string/>
+      </property>
+     </widget>
+    </widget>
+    <widget class="QWidget" name="page"/>
     <widget class="QWidget" name="page_2"/>
    </widget>
    <widget class="QWidget" name="horizontalLayoutWidget">
     <property name="geometry">
      <rect>
       <x>40</x>
-      <y>580</y>
+      <y>590</y>
       <width>1201</width>
-      <height>141</height>
+      <height>130</height>
      </rect>
     </property>
     <layout class="QHBoxLayout" name="horizontalLayout_3">
      <item>
-      <widget class="QLabel" name="label_90">
+      <widget class="QPushButton" name="homeb">
        <property name="minimumSize">
         <size>
          <width>128</width>
@@ -2454,16 +2478,28 @@ border-radius: 5px;</string>
          <height>128</height>
         </size>
        </property>
+       <property name="styleSheet">
+        <string notr="true">background-color: rgba(255, 255, 255, 0);
+border: none;
+border-radius: 8px;</string>
+       </property>
        <property name="text">
         <string/>
        </property>
-       <property name="pixmap">
-        <pixmap>icons/free-icon-home-1946436.png</pixmap>
+       <property name="icon">
+        <iconset>
+         <normaloff>icons/free-icon-home-1946436.png</normaloff>icons/free-icon-home-1946436.png</iconset>
+       </property>
+       <property name="iconSize">
+        <size>
+         <width>96</width>
+         <height>96</height>
+        </size>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="QLabel" name="label_9">
+      <widget class="QPushButton" name="searchb">
        <property name="minimumSize">
         <size>
          <width>128</width>
@@ -2476,16 +2512,28 @@ border-radius: 5px;</string>
          <height>128</height>
         </size>
        </property>
+       <property name="styleSheet">
+        <string notr="true">background-color: rgba(255, 255, 255, 0);
+border: none;
+border-radius: 8px;</string>
+       </property>
        <property name="text">
         <string/>
        </property>
-       <property name="pixmap">
-        <pixmap>icons/free-icon-search-2997940.png</pixmap>
+       <property name="icon">
+        <iconset>
+         <normaloff>icons/free-icon-search-2997940.png</normaloff>icons/free-icon-search-2997940.png</iconset>
+       </property>
+       <property name="iconSize">
+        <size>
+         <width>96</width>
+         <height>96</height>
+        </size>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="QLabel" name="label_8">
+      <widget class="QPushButton" name="addb">
        <property name="minimumSize">
         <size>
          <width>128</width>
@@ -2498,16 +2546,28 @@ border-radius: 5px;</string>
          <height>128</height>
         </size>
        </property>
+       <property name="styleSheet">
+        <string notr="true">background-color: rgba(255, 255, 255, 0);
+border: none;
+border-radius: 8px;</string>
+       </property>
        <property name="text">
         <string/>
        </property>
-       <property name="pixmap">
-        <pixmap>icons/free-icon-plus-1828921.png</pixmap>
+       <property name="icon">
+        <iconset>
+         <normaloff>icons/free-icon-plus-1828921.png</normaloff>icons/free-icon-plus-1828921.png</iconset>
+       </property>
+       <property name="iconSize">
+        <size>
+         <width>96</width>
+         <height>96</height>
+        </size>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="QLabel" name="label_7">
+      <widget class="QPushButton" name="profileb">
        <property name="minimumSize">
         <size>
          <width>128</width>
@@ -2520,11 +2580,23 @@ border-radius: 5px;</string>
          <height>128</height>
         </size>
        </property>
+       <property name="styleSheet">
+        <string notr="true">background-color: rgba(255, 255, 255, 0);
+border: none;
+border-radius: 8px;</string>
+       </property>
        <property name="text">
         <string/>
        </property>
-       <property name="pixmap">
-        <pixmap>icons/free-icon-profile-4042565.png</pixmap>
+       <property name="icon">
+        <iconset>
+         <normaloff>icons/free-icon-profile-4042565.png</normaloff>icons/free-icon-profile-4042565.png</iconset>
+       </property>
+       <property name="iconSize">
+        <size>
+         <width>96</width>
+         <height>96</height>
+        </size>
        </property>
       </widget>
      </item>
