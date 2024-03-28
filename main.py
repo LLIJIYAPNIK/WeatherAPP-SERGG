@@ -6,23 +6,15 @@ from PyQt5.QtWidgets import QMainWindow, QApplication, QComboBox, QLabel, QCompl
 import sqlite3
 import requests
 import json
+from weather_data import weather_data
+from icons import icons_128, icons_256
 
 connection = sqlite3.connect('cities.db')
 cur = connection.cursor()
 
 
-access_key = '251f5b1c-ba22-4437-a2fe-86a9428986fe'
-
-headers = {
-    'X-Yandex-Weather-Key': access_key
-}
-
-response = requests.get('https://api.weather.yandex.ru/v2/forecast?lat=55.7522200&lon=37.6155600', headers=headers)
-
-# json_data = json.dumps(response.json(), indent=4)
-
-with open('test_1.json', 'w') as f:
-    json.dump(response.json(), f, ensure_ascii=False, indent=4)
+# with open('test_1.json', 'w') as f:
+#     json.dump(response.json(), f, ensure_ascii=False, indent=4)
 
 
 class MainWindow(QMainWindow):
@@ -52,7 +44,6 @@ class MainWindow(QMainWindow):
         self.searchb.setStyleSheet("background-color: rgba(255, 255, 255, 0);\nborder: none;\nborder-radius: 15px;")
         self.addb.setStyleSheet("background-color: rgba(255, 255, 255, 0);\nborder: none;\nborder-radius: 15px;")
         self.profileb.setStyleSheet("background-color: rgba(255, 255, 255, 0);\nborder: none;\nborder-radius: 15px;")
-
 
     def search_page_f(self):
         self.stackedWidget.setCurrentIndex(1)
