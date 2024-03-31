@@ -6,21 +6,25 @@ from PyQt5.QtWidgets import QMainWindow, QApplication, QComboBox, QLabel, QCompl
 import sqlite3
 import requests
 import json
-from weather_data import weather_data
+from weather_data import weather_api
 from icons import icons_128, icons_256
+from time_dict import months, months_short
+from current_city import get_current_coords
+from main_design import Ui_MainWindow
 
 connection = sqlite3.connect('cities.db')
 cur = connection.cursor()
 
+lat, lon = get_current_coords(cur)
 
-# with open('test_1.json', 'w') as f:
-#     json.dump(response.json(), f, ensure_ascii=False, indent=4)
+with open('test_1.json', 'w') as f:
+    json.dump(weather_api(lat, lon), f, ensure_ascii=False, indent=4)
 
 
-class MainWindow(QMainWindow):
+class MainWindow(QMainWindow, Ui_MainWindow):
     def __init__(self):
         super().__init__()
-        uic.loadUi('main.ui', self)
+        self.setupUi(self)
 
         # Установка флага для отслеживания нажатия кнопки мыши
         self.mouse_pressed = False
@@ -37,6 +41,11 @@ class MainWindow(QMainWindow):
         self.searchb.clicked.connect(self.search_page_f)
         self.addb.clicked.connect(self.add_page_f)
         self.profileb.clicked.connect(self.profile_page_f)
+
+        self.stackedWidget.setCurrentIndex(0)
+
+
+
 
     def home_page_f(self):
         self.stackedWidget.setCurrentIndex(0)
