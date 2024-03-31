@@ -11,7 +11,7 @@ from icons import icons_128, icons_256
 from time_dict import months, months_short
 from current_city import get_current_coords
 from main_design import Ui_MainWindow
-from current_city import get_current_city
+from current_city import get_current_city, get_current_city_coords
 
 connection = sqlite3.connect('cities.db')
 cur = connection.cursor()
@@ -52,7 +52,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             else:
                 self.last_city = get_current_city()
 
-
+        lat, lon = get_current_city_coords(cur, self.last_city)
+        print(lat, lon)
 
 
     def home_page_f(self):

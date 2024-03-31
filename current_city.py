@@ -39,3 +39,8 @@ def get_current_city():
     current_city = str(city).split(', ')[1]
 
     return current_city
+
+
+def get_current_city_coords(cur, city):
+    lat, lon = cur.execute("SELECT Широта, Долгота FROM city WHERE Город = ?", (city,)).fetchall()[0]
+    return lat, lon
