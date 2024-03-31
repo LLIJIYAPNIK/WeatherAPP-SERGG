@@ -11,6 +11,7 @@ from icons import icons_128, icons_256
 from time_dict import months, months_short
 from current_city import get_current_coords
 from main_design import Ui_MainWindow
+from current_city import get_current_city
 
 connection = sqlite3.connect('cities.db')
 cur = connection.cursor()
@@ -43,6 +44,13 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.profileb.clicked.connect(self.profile_page_f)
 
         self.stackedWidget.setCurrentIndex(0)
+
+        with open('last_city', encoding='utf8') as f:
+            city = f.readline()
+            if city:
+                self.last_city = city
+            else:
+                self.last_city = get_current_city()
 
 
 
