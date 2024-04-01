@@ -1,8 +1,10 @@
+import datetime
 import sys
 from PyQt5 import QtCore, uic
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QIcon, QPixmap
-from PyQt5.QtWidgets import QMainWindow, QApplication, QComboBox, QLabel, QCompleter, QVBoxLayout
+from PyQt5.QtWidgets import QMainWindow, QApplication, QComboBox, QLabel, QCompleter, QVBoxLayout, QGridLayout, QWidget, \
+    QHBoxLayout, QFrame
 import sqlite3
 import requests
 import json
@@ -16,10 +18,10 @@ from current_city import get_current_city, get_current_city_coords
 connection = sqlite3.connect('cities.db')
 cur = connection.cursor()
 
-lat, lon = get_current_coords(cur)
+# lat, lon = get_current_coords(cur)
 
-with open('test_1.json', 'w') as f:
-    json.dump(weather_api(lat, lon), f, ensure_ascii=False, indent=4)
+# with open('test_1.json', 'w') as f:
+#     json.dump(weather_api(lat, lon), f, ensure_ascii=False, indent=4)
 
 
 class MainWindow(QMainWindow, Ui_MainWindow):
@@ -47,213 +49,148 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         with open('last_city', encoding='utf8') as f:
             city = f.readline()
+            print(city)
             if city:
                 self.last_city = city
             else:
                 self.last_city = get_current_city()
 
+        print(self.last_city)
+
         lat, lon = get_current_city_coords(cur, self.last_city)
 
         data = weather_api(lat, lon)
 
-        for count_d in range(0, 10):
-            with open('test_1.json') as f:
-                data = json.load(f)
-                if count_d == 0:
-                    self.label_54.setText("Сегодня")
-                    self.label_55.setPixmap(QPixmap(icons_128[data["forecasts"][0]["parts"]["day"]["icon"]]))
-                    self.label_55.setAlignment(Qt.AlignCenter)
-                    if data["forecasts"][0]["parts"]["day"]["temp_max"] > 0:
-                        self.label_56.setText("+" + str(data["forecasts"][0]["parts"]["day"]["temp_max"]))
-                    elif data["forecasts"][0]["parts"]["day"]["temp_max"] < 0:
-                        self.label_56.setText("-" + str(data["forecasts"][0]["parts"]["day"]["temp_max"]))
-                    else:
-                        self.label_56.setText(str(data["forecasts"][0]["parts"]["day"]["temp_max"]))
+        print(json.dumps(data, indent=4))
 
-                    if data["forecasts"][0]["parts"]["day"]["temp_min"] > 0:
-                        self.label_57.setText("+" + str(data["forecasts"][0]["parts"]["day"]["temp_min"]))
-                    elif data["forecasts"][0]["parts"]["day"]["temp_min"] < 0:
-                        self.label_57.setText("-" + str(data["forecasts"][0]["parts"]["day"]["temp_min"]))
-                    else:
-                        self.label_57.setText(str(data["forecasts"][0]["parts"]["day"]["temp_min"]))
+        print(data)
 
-                if count_d == 1:
-                    self.label_10.setText("Завтра")
-                    self.label_13.setPixmap(QPixmap(icons_128[data["forecasts"][1]["parts"]["day"]["icon"]]))
-                    self.label_13.setAlignment(Qt.AlignCenter)
-                    if data["forecasts"][1]["parts"]["day"]["temp_max"] > 0:
-                        self.label_12.setText("+" + str(data["forecasts"][1]["parts"]["day"]["temp_max"]))
-                    elif data["forecasts"][1]["parts"]["day"]["temp_max"] < 0:
-                        self.label_12.setText("-" + str(data["forecasts"][1]["parts"]["day"]["temp_max"]))
-                    else:
-                        self.label_12.setText(str(data["forecasts"][1]["parts"]["day"]["temp_max"]))
+        main_layout_future = QHBoxLayout()
+        main_widget_future = QWidget()
+        main_widget_future.setLayout(main_layout_future)
 
-                    if data["forecasts"][1]["parts"]["day"]["temp_min"] > 0:
-                        self.label_11.setText("+" + str(data["forecasts"][1]["parts"]["day"]["temp_min"]))
-                    elif data["forecasts"][1]["parts"]["day"]["temp_min"] < 0:
-                        self.label_11.setText("-" + str(data["forecasts"][1]["parts"]["day"]["temp_min"]))
-                    else:
-                        self.label_11.setText(str(data["forecasts"][1]["parts"]["day"]["temp_min"]))
+        for i in range(0, 7):
+            name = QLabel()
+            name.setMaximumSize(128, 40)
+            name.setMinimumSize(128, 40)
+            name.setStyleSheet("background-color: rgba(255, 255, 255, 100);\nborder: none;\nborder-radius: 15px;")
 
-                if count_d == 2:
-                    date = data["forecasts"][2]["date"]
-                    year, month, day = list(map(str, str(date).split('-')))
-                    self.label_14.setText(f"{str(day).zfill(2)} {months_short[month]}")
-                    self.label_17.setPixmap(QPixmap(icons_128[data["forecasts"][2]["parts"]["day"]["icon"]]))
-                    self.label_17.setAlignment(Qt.AlignCenter)
-                    if data["forecasts"][2]["parts"]["day"]["temp_max"] > 0:
-                        self.label_16.setText("+" + str(data["forecasts"][2]["parts"]["day"]["temp_max"]))
-                    elif data["forecasts"][2]["parts"]["day"]["temp_max"] < 0:
-                        self.label_16.setText("-" + str(data["forecasts"][2]["parts"]["day"]["temp_max"]))
-                    else:
-                        self.label_16.setText(str(data["forecasts"][2]["parts"]["day"]["temp_max"]))
+            img = QLabel()
+            img.setMinimumSize(128, 128)
+            img.setMaximumSize(128, 128)
+            img.setStyleSheet('background-color: rgba(255, 255, 255, 100);\nborder: none;\nborder-radius: 15px;')
 
-                    if data["forecasts"][2]["parts"]["day"]["temp_min"] > 0:
-                        self.label_15.setText("+" + str(data["forecasts"][2]["parts"]["day"]["temp_min"]))
-                    elif data["forecasts"][2]["parts"]["day"]["temp_min"] < 0:
-                        self.label_15.setText("-" + str(data["forecasts"][2]["parts"]["day"]["temp_min"]))
-                    else:
-                        self.label_15.setText(str(data["forecasts"][2]["parts"]["day"]["temp_min"]))
+            max_temp = QLabel()
+            max_temp.setMaximumSize(60, 40)
+            max_temp.setMinimumSize(60, 40)
+            max_temp.setStyleSheet("background-color: rgba(255, 255, 255, 100);\nborder: none;\nborder-radius: 15px;")
 
-                if count_d == 3:
-                    date = data["forecasts"][3]["date"]
-                    year, month, day = list(map(str, str(date).split('-')))
-                    self.label_26.setText(f"{str(day).zfill(2)} {months_short[month]}")
-                    self.label_29.setPixmap(QPixmap(icons_128[data["forecasts"][3]["parts"]["day"]["icon"]]))
-                    self.label_29.setAlignment(Qt.AlignCenter)
-                    if data["forecasts"][3]["parts"]["day"]["temp_max"] > 0:
-                        self.label_28.setText("+" + str(data["forecasts"][3]["parts"]["day"]["temp_max"]))
-                    elif data["forecasts"][3]["parts"]["day"]["temp_max"] < 0:
-                        self.label_28.setText("-" + str(data["forecasts"][3]["parts"]["day"]["temp_max"]))
-                    else:
-                        self.label_28.setText(str(data["forecasts"][3]["parts"]["day"]["temp_max"]))
+            min_temp = QLabel()
+            min_temp.setMaximumSize(60, 40)
+            min_temp.setMinimumSize(60, 40)
+            min_temp.setStyleSheet("background-color: rgba(255, 255, 255, 100);\nborder: none;\nborder-radius: 15px;")
 
-                    if data["forecasts"][3]["parts"]["day"]["temp_min"] > 0:
-                        self.label_27.setText("+" + str(data["forecasts"][3]["parts"]["day"]["temp_min"]))
-                    elif data["forecasts"][3]["parts"]["day"]["temp_min"] < 0:
-                        self.label_27.setText("-" + str(data["forecasts"][3]["parts"]["day"]["temp_min"]))
-                    else:
-                        self.label_27.setText(str(data["forecasts"][3]["parts"]["day"]["temp_min"]))
+            layout = QGridLayout()
+            widget = QWidget()
+            widget.setLayout(layout)
 
-                if count_d == 4:
-                    date = data["forecasts"][4]["date"]
-                    year, month, day = list(map(str, str(date).split('-')))
-                    self.label_30.setText(f"{str(day).zfill(2)} {months_short[month]}")
-                    self.label_33.setPixmap(QPixmap(icons_128[data["forecasts"][4]["parts"]["day"]["icon"]]))
-                    self.label_33.setAlignment(Qt.AlignCenter)
-                    if data["forecasts"][4]["parts"]["day"]["temp_max"] > 0:
-                        self.label_32.setText("+" + str(data["forecasts"][4]["parts"]["day"]["temp_max"]))
-                    elif data["forecasts"][4]["parts"]["day"]["temp_max"] < 0:
-                        self.label_32.setText("-" + str(data["forecasts"][4]["parts"]["day"]["temp_max"]))
-                    else:
-                        self.label_32.setText(str(data["forecasts"][4]["parts"]["day"]["temp_max"]))
+            date = data["forecasts"][i]["date"]
 
-                    if data["forecasts"][4]["parts"]["day"]["temp_min"] > 0:
-                        self.label_31.setText("+" + str(data["forecasts"][4]["parts"]["day"]["temp_min"]))
-                    elif data["forecasts"][4]["parts"]["day"]["temp_min"] < 0:
-                        self.label_31.setText("-" + str(data["forecasts"][4]["parts"]["day"]["temp_min"]))
-                    else:
-                        self.label_31.setText(str(data["forecasts"][4]["parts"]["day"]["temp_min"]))
+            if i == 0:
+                name.setText("Сегодня")
+            elif i == 1:
+                name.setText("Завтра")
+            else:
+                year, month, day = str(date).split('-')
+                name_month = months_short[month]
 
-                if count_d == 5:
-                    date = data["forecasts"][5]["date"]
-                    year, month, day = list(map(str, str(date).split('-')))
-                    self.label_34.setText(f"{str(day).zfill(2)} {months_short[month]}")
-                    self.label_37.setPixmap(QPixmap(icons_128[data["forecasts"][5]["parts"]["day"]["icon"]]))
-                    self.label_37.setAlignment(Qt.AlignCenter)
-                    if data["forecasts"][5]["parts"]["day"]["temp_max"] > 0:
-                        self.label_36.setText("+" + str(data["forecasts"][5]["parts"]["day"]["temp_max"]))
-                    elif data["forecasts"][5]["parts"]["day"]["temp_max"] < 0:
-                        self.label_36.setText("-" + str(data["forecasts"][5]["parts"]["day"]["temp_max"]))
-                    else:
-                        self.label_36.setText(str(data["forecasts"][5]["parts"]["day"]["temp_max"]))
+                name.setText(f'{day} {name_month}')
 
-                    if data["forecasts"][5]["parts"]["day"]["temp_min"] > 0:
-                        self.label_35.setText("+" + str(data["forecasts"][5]["parts"]["day"]["temp_min"]))
-                    elif data["forecasts"][5]["parts"]["day"]["temp_min"] < 0:
-                        self.label_35.setText("-" + str(data["forecasts"][5]["parts"]["day"]["temp_min"]))
-                    else:
-                        self.label_35.setText(str(data["forecasts"][5]["parts"]["day"]["temp_min"]))
+            img.setPixmap(QPixmap(icons_128[data["forecasts"][1]["parts"]["day"]["icon"]]))
 
-                if count_d == 6:
-                    date = data["forecasts"][6]["date"]
-                    year, month, day = list(map(str, str(date).split('-')))
-                    self.label_38.setText(f"{str(day).zfill(2)} {months_short[month]}")
-                    self.label_41.setPixmap(QPixmap(icons_128[data["forecasts"][6]["parts"]["day"]["icon"]]))
-                    self.label_41.setAlignment(Qt.AlignCenter)
-                    if data["forecasts"][6]["parts"]["day"]["temp_max"] > 0:
-                        self.label_40.setText("+" + str(data["forecasts"][6]["parts"]["day"]["temp_max"]))
-                    elif data["forecasts"][6]["parts"]["day"]["temp_max"] < 0:
-                        self.label_40.setText("-" + str(data["forecasts"][6]["parts"]["day"]["temp_max"]))
-                    else:
-                        self.label_40.setText(str(data["forecasts"][6]["parts"]["day"]["temp_max"]))
+            if data["forecasts"][i]["parts"]["day"]["temp_max"] > 0:
+                max_temp.setText("+" + str(data["forecasts"][i]["parts"]["day"]["temp_max"]))
+            elif data["forecasts"][i]["parts"]["day"]["temp_max"] < 0:
+                max_temp.setText("-" + str(data["forecasts"][i]["parts"]["day"]["temp_max"]))
+            else:
+                max_temp.setText(str(data["forecasts"][i]["parts"]["day"]["temp_max"]))
 
-                    if data["forecasts"][6]["parts"]["day"]["temp_min"] > 0:
-                        self.label_39.setText("+" + str(data["forecasts"][6]["parts"]["day"]["temp_min"]))
-                    elif data["forecasts"][6]["parts"]["day"]["temp_min"] < 0:
-                        self.label_39.setText("-" + str(data["forecasts"][6]["parts"]["day"]["temp_min"]))
-                    else:
-                        self.label_39.setText(str(data["forecasts"][6]["parts"]["day"]["temp_min"]))
+            if data["forecasts"][i]["parts"]["day"]["temp_min"] > 0:
+                min_temp.setText("+" + str(data["forecasts"][i]["parts"]["night"]["temp_min"]))
+            elif data["forecasts"][i]["parts"]["day"]["temp_min"] < 0:
+                min_temp.setText("-" + str(data["forecasts"][i]["parts"]["night"]["temp_min"]))
+            else:
+                min_temp.setText(str(data["forecasts"][i]["parts"]["night"]["temp_min"]))
 
-                # if count_d == 7:
-                #     date = data["forecasts"][7]["date"]
-                #     year, month, day = list(map(str, str(date).split('-')))
-                #     self.label_42.setText(f"{str(day).zfill(2)} {months_short[month]}")
-                #     self.label_45.setPixmap(QPixmap(icons_128[data["forecasts"][7]["parts"]["day"]["icon"]]))
-                #     self.label_45.setAlignment(Qt.AlignCenter)
-                #     if data["forecasts"][7]["parts"]["day"]["temp_max"] > 0:
-                #         self.label_44.setText("+" + str(data["forecasts"][7]["parts"]["day"]["temp_max"]))
-                #     elif data["forecasts"][7]["parts"]["day"]["temp_max"] < 0:
-                #         self.label_44.setText("-" + str(data["forecasts"][7]["parts"]["day"]["temp_max"]))
-                #     else:
-                #         self.label_44.setText(str(data["forecasts"][7]["parts"]["day"]["temp_max"]))
-                #
-                #     if data["forecasts"][7]["parts"]["day"]["temp_min"] > 0:
-                #         self.label_43.setText("+" + str(data["forecasts"][7]["parts"]["day"]["temp_min"]))
-                #     elif data["forecasts"][7]["parts"]["day"]["temp_min"] < 0:
-                #         self.label_43.setText("-" + str(data["forecasts"][7]["parts"]["day"]["temp_min"]))
-                #     else:
-                #         self.label_43.setText(str(data["forecasts"][7]["parts"]["day"]["temp_min"]))
-                #
-                # if count_d == 8:
-                #     date = data["forecasts"][8]["date"]
-                #     year, month, day = list(map(str, str(date).split('-')))
-                #     self.label_46.setText(f"{str(day).zfill(2)} {months_short[month]}")
-                #     self.label_49.setPixmap(QPixmap(icons_128[data["forecasts"][8]["parts"]["day"]["icon"]]))
-                #     self.label_49.setAlignment(Qt.AlignCenter)
-                #     if data["forecasts"][8]["parts"]["day"]["temp_max"] > 0:
-                #         self.label_48.setText("+" + str(data["forecasts"][8]["parts"]["day"]["temp_max"]))
-                #     elif data["forecasts"][8]["parts"]["day"]["temp_max"] < 0:
-                #         self.label_48.setText("-" + str(data["forecasts"][8]["parts"]["day"]["temp_max"]))
-                #     else:
-                #         self.label_48.setText(str(data["forecasts"][8]["parts"]["day"]["temp_max"]))
-                #
-                #     if data["forecasts"][8]["parts"]["day"]["temp_min"] > 0:
-                #         self.label_47.setText("+" + str(data["forecasts"][8]["parts"]["day"]["temp_min"]))
-                #     elif data["forecasts"][8]["parts"]["day"]["temp_min"] < 0:
-                #         self.label_47.setText("-" + str(data["forecasts"][8]["parts"]["day"]["temp_min"]))
-                #     else:
-                #         self.label_47.setText(str(data["forecasts"][8]["parts"]["day"]["temp_min"]))
-                #
-                # if count_d == 9:
-                #     date = data["forecasts"][9]["date"]
-                #     year, month, day = list(map(str, str(date).split('-')))
-                #     self.label_50.setText(f"{str(day).zfill(2)} {months_short[month]}")
-                #     self.label_53.setPixmap(QPixmap(icons_128[data["forecasts"][9]["parts"]["day"]["icon"]]))
-                #     self.label_53.setAlignment(Qt.AlignCenter)
-                #     if data["forecasts"][9]["parts"]["day"]["temp_max"] > 0:
-                #         self.label_52.setText("+" + str(data["forecasts"][9]["parts"]["day"]["temp_max"]))
-                #     elif data["forecasts"][9]["parts"]["day"]["temp_max"] < 0:
-                #         self.label_52.setText("-" + str(data["forecasts"][9]["parts"]["day"]["temp_max"]))
-                #     else:
-                #         self.label_52.setText(str(data["forecasts"][9]["parts"]["day"]["temp_max"]))
-                #
-                #     if data["forecasts"][9]["parts"]["day"]["temp_min"] > 0:
-                #         self.label_51.setText("+" + str(data["forecasts"][9]["parts"]["day"]["temp_min"]))
-                #     elif data["forecasts"][9]["parts"]["day"]["temp_min"] < 0:
-                #         self.label_51.setText("-" + str(data["forecasts"][9]["parts"]["day"]["temp_min"]))
-                #     else:
-                #         self.label_51.setText(str(data["forecasts"][9]["parts"]["day"]["temp_min"]))
+            print(min_temp.text())
+
+            max_min = QHBoxLayout()
+            max_min.addWidget(max_temp)
+            max_min.addWidget(min_temp)
+
+            layout.addWidget(name, 0, 0)  # Размещаем name в строке 0, столбце 0
+            layout.addWidget(img, 1, 0, 1, 1)  # Размещаем img в строке 1, столбце 0, занимая 2 столбца
+            layout.addLayout(max_min, 2, 0)
+
+            main_layout_future.addWidget(widget)
+
+        self.future.setWidget(main_widget_future)
+
+        current_hour = int(str(datetime.datetime.now().time()).split(":")[0])
+        main_layout_hours = QHBoxLayout()
+        main_widget_hours = QWidget()
+        main_widget_hours.setLayout(main_layout_hours)
+
+        for i in range(0, 25):
+            hour = QLabel()
+            hour.setMaximumSize(128, 40)
+            hour.setMinimumSize(128, 40)
+            hour.setStyleSheet("background-color: rgba(255, 255, 255, 100);\nborder: none;\nborder-radius: 15px;")
+            layout = QVBoxLayout()
+            widget = QWidget()
+            widget.setLayout(layout)
+
+            img = QLabel()
+            img.setMinimumSize(128, 128)
+            img.setMaximumSize(128, 128)
+            img.setStyleSheet('background-color: rgba(255, 255, 255, 100);\nborder: none;\nborder-radius: 15px;')
+
+            temp = QLabel()
+            temp.setMaximumSize(128, 40)
+            temp.setMinimumSize(128, 40)
+            temp.setStyleSheet("background-color: rgba(255, 255, 255, 100);\nborder: none;\nborder-radius: 15px;")
+
+            if current_hour + i <= 23:
+                hour.setText(f'{str(data["forecasts"][0]["hours"][current_hour + i]["hour"]).zfill(2)}:00')
+                img.setPixmap(QPixmap(icons_128[data["forecasts"][0]["hours"][current_hour + i]["icon"]]))
+
+                if data["forecasts"][0]["hours"][current_hour + i]["temp"] > 0:
+                    temp.setText("+" + str(data["forecasts"][0]["hours"][current_hour + i]["temp"]))
+                elif data["forecasts"][0]["hours"][current_hour + i]["hour"] < 0:
+                    temp.setText("-" + str(data["forecasts"][0]["hours"][current_hour + i]["temp"]))
+                else:
+                    temp.setText(str(data["forecasts"][0]["hours"][current_hour + i]["temp"]))
+            else:
+                hour.setText(f'{str(data["forecasts"][1]["hours"][(current_hour + i) % 24]["hour"]).zfill(2)}:00')
+                img.setPixmap(QPixmap(icons_128[data["forecasts"][1]["hours"][(current_hour + i) % 24]["icon"]]))
+
+                if data["forecasts"][1]["hours"][(current_hour + i) % 24]["temp"] > 0:
+                    temp.setText("+" + str(data["forecasts"][1]["hours"][(current_hour + i) % 24]["temp"]))
+                elif data["forecasts"][1]["hours"][(current_hour + i) % 24]["hour"] < 0:
+                    temp.setText("-" + str(data["forecasts"][1]["hours"][(current_hour + i) % 24]["temp"]))
+                else:
+                    temp.setText(str(data["forecasts"][1]["hours"][(current_hour + i) % 24]["temp"]))
+
+            layout.addWidget(hour)
+            layout.addWidget(img)
+            layout.addWidget(temp)
+
+            main_layout_hours.addWidget(widget)
+
+        main_widget_hours.setLayout(main_layout_hours)
+        self.hours.setWidget(main_widget_hours)
+
+
 
     def home_page_f(self):
         self.stackedWidget.setCurrentIndex(0)
