@@ -60,6 +60,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.homeb.setStyleSheet("background-color: rgba(255, 255, 255, 100);\nborder: none;\nborder-radius: 15px;")
         self.searchb.setStyleSheet("background-color: rgba(255, 255, 255, 0);\nborder: none;\nborder-radius: 15px;")
         self.profileb.setStyleSheet("background-color: rgba(255, 255, 255, 0);\nborder: none;\nborder-radius: 15px;")
+        self.statusBar().hide()
 
         with open('last_city', encoding='utf8') as f:
             city = f.readline()
@@ -239,10 +240,12 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.homeb.setStyleSheet("background-color: rgba(255, 255, 255, 0);\nborder: none;\nborder-radius: 15px;")
         self.searchb.setStyleSheet("background-color: rgba(255, 255, 255, 100);\nborder: none;\nborder-radius: 15px;")
         self.profileb.setStyleSheet("background-color: rgba(255, 255, 255, 0);\nborder: none;\nborder-radius: 15px;")
+        self.statusBar().hide()
 
         cities = [x[0] for x in list(cur.execute("SELECT Город FROM city").fetchall())]
 
-        completer = QCompleter(cities)
+        completer = QCompleter(cities, self)
+        completer.setCaseSensitivity(QtCore.Qt.CaseInsensitive)
 
         self.search_le.setCompleter(completer)
 
@@ -255,188 +258,189 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         print(self.search_city_v)
 
     def check_city_f(self):
-        city = self.search_city_v
-        print(city, self.search_city_v)
+        if self.search_city_v != "" and self.search_city_v.lower() in [str(x[0]).lower() for x in list(cur.execute("SELECT Город FROM city").fetchall())]:
+            self.statusBar().hide()
+            city = self.search_city_v
+            print(city, self.search_city_v)
 
-        self.stackedWidget.setCurrentIndex(4)
+            self.stackedWidget.setCurrentIndex(4)
 
-        lat, lon = get_current_city_coords(cur, city)
+            lat, lon = get_current_city_coords(cur, city)
 
-        data = weather_api(lat, lon)
+            data = weather_api(lat, lon)
 
-        main_layout_future = QHBoxLayout()
-        main_widget_future = QWidget()
-        main_widget_future.setLayout(main_layout_future)
+            main_layout_future = QHBoxLayout()
+            main_widget_future = QWidget()
+            main_widget_future.setLayout(main_layout_future)
 
-        for i in range(0, 7):
-            name = QLabel()
-            name.setMaximumSize(128, 40)
-            name.setMinimumSize(128, 40)
-            name.setStyleSheet("background-color: rgba(255, 255, 255, 100);\nborder: none;\nborder-radius: 15px;")
+            for i in range(0, 7):
+                name = QLabel()
+                name.setMaximumSize(128, 40)
+                name.setMinimumSize(128, 40)
+                name.setStyleSheet("background-color: rgba(255, 255, 255, 100);\nborder: none;\nborder-radius: 15px;")
 
-            img = QLabel()
-            img.setMinimumSize(128, 128)
-            img.setMaximumSize(128, 128)
-            img.setStyleSheet('background-color: rgba(255, 255, 255, 100);\nborder: none;\nborder-radius: 15px;')
+                img = QLabel()
+                img.setMinimumSize(128, 128)
+                img.setMaximumSize(128, 128)
+                img.setStyleSheet('background-color: rgba(255, 255, 255, 100);\nborder: none;\nborder-radius: 15px;')
 
-            max_temp = QLabel()
-            max_temp.setMaximumSize(60, 40)
-            max_temp.setMinimumSize(60, 40)
-            max_temp.setStyleSheet("background-color: rgba(255, 255, 255, 100);\nborder: none;\nborder-radius: 15px;")
+                max_temp = QLabel()
+                max_temp.setMaximumSize(60, 40)
+                max_temp.setMinimumSize(60, 40)
+                max_temp.setStyleSheet("background-color: rgba(255, 255, 255, 100);\nborder: none;\nborder-radius: 15px;")
 
-            min_temp = QLabel()
-            min_temp.setMaximumSize(60, 40)
-            min_temp.setMinimumSize(60, 40)
-            min_temp.setStyleSheet("background-color: rgba(255, 255, 255, 100);\nborder: none;\nborder-radius: 15px;")
+                min_temp = QLabel()
+                min_temp.setMaximumSize(60, 40)
+                min_temp.setMinimumSize(60, 40)
+                min_temp.setStyleSheet("background-color: rgba(255, 255, 255, 100);\nborder: none;\nborder-radius: 15px;")
 
-            layout = QGridLayout()
-            widget = QWidget()
-            widget.setLayout(layout)
+                layout = QGridLayout()
+                widget = QWidget()
+                widget.setLayout(layout)
 
-            date = data["forecasts"][i]["date"]
+                date = data["forecasts"][i]["date"]
 
-            if i == 0:
-                name.setText("Сегодня")
-            elif i == 1:
-                name.setText("Завтра")
-            else:
-                year, month, day = str(date).split('-')
-                name_month = months_short[month]
-
-                name.setText(f'{day} {name_month}')
-
-            img.setPixmap(QPixmap(icons_128[data["forecasts"][1]["parts"]["day"]["icon"]]))
-
-            if data["forecasts"][i]["parts"]["day"]["temp_max"] > 0:
-                max_temp.setText("+" + str(data["forecasts"][i]["parts"]["day"]["temp_max"]))
-            elif data["forecasts"][i]["parts"]["day"]["temp_max"] < 0:
-                max_temp.setText("-" + str(data["forecasts"][i]["parts"]["day"]["temp_max"]))
-            else:
-                max_temp.setText(str(data["forecasts"][i]["parts"]["day"]["temp_max"]))
-
-            if data["forecasts"][i]["parts"]["day"]["temp_min"] > 0:
-                min_temp.setText("+" + str(data["forecasts"][i]["parts"]["night"]["temp_min"]))
-            elif data["forecasts"][i]["parts"]["day"]["temp_min"] < 0:
-                min_temp.setText("-" + str(data["forecasts"][i]["parts"]["night"]["temp_min"]))
-            else:
-                min_temp.setText(str(data["forecasts"][i]["parts"]["night"]["temp_min"]))
-
-            max_min = QHBoxLayout()
-            max_min.addWidget(max_temp)
-            max_min.addWidget(min_temp)
-
-            layout.addWidget(name, 0, 0)  # Размещаем name в строке 0, столбце 0
-            layout.addWidget(img, 1, 0, 1, 1)  # Размещаем img в строке 1, столбце 0, занимая 2 столбца
-            layout.addLayout(max_min, 2, 0)
-
-            main_layout_future.addWidget(widget)
-
-        self.future_2.setWidget(main_widget_future)
-
-        current_hour = int(str(datetime.datetime.now().time()).split(":")[0])
-        main_layout_hours = QHBoxLayout()
-        main_widget_hours = QWidget()
-        main_widget_hours.setLayout(main_layout_hours)
-
-        for i in range(0, 25):
-            hour = QLabel()
-            hour.setMaximumSize(128, 40)
-            hour.setMinimumSize(128, 40)
-            hour.setStyleSheet("background-color: rgba(255, 255, 255, 100);\nborder: none;\nborder-radius: 15px;")
-            layout = QVBoxLayout()
-            widget = QWidget()
-            widget.setLayout(layout)
-
-            img = QLabel()
-            img.setMinimumSize(128, 128)
-            img.setMaximumSize(128, 128)
-            img.setStyleSheet('background-color: rgba(255, 255, 255, 100);\nborder: none;\nborder-radius: 15px;')
-
-            temp = QLabel()
-            temp.setMaximumSize(128, 40)
-            temp.setMinimumSize(128, 40)
-            temp.setStyleSheet("background-color: rgba(255, 255, 255, 100);\nborder: none;\nborder-radius: 15px;")
-
-            if current_hour + i <= 23:
-                hour.setText(f'{str(data["forecasts"][0]["hours"][current_hour + i]["hour"]).zfill(2)}:00')
-                img.setPixmap(QPixmap(icons_128[data["forecasts"][0]["hours"][current_hour + i]["icon"]]))
-
-                if data["forecasts"][0]["hours"][current_hour + i]["temp"] > 0:
-                    temp.setText("+" + str(data["forecasts"][0]["hours"][current_hour + i]["temp"]))
-                elif data["forecasts"][0]["hours"][current_hour + i]["hour"] < 0:
-                    temp.setText("-" + str(data["forecasts"][0]["hours"][current_hour + i]["temp"]))
+                if i == 0:
+                    name.setText("Сегодня")
+                elif i == 1:
+                    name.setText("Завтра")
                 else:
-                    temp.setText(str(data["forecasts"][0]["hours"][current_hour + i]["temp"]))
-            else:
-                hour.setText(f'{str(data["forecasts"][1]["hours"][(current_hour + i) % 24]["hour"]).zfill(2)}:00')
-                img.setPixmap(QPixmap(icons_128[data["forecasts"][1]["hours"][(current_hour + i) % 24]["icon"]]))
+                    year, month, day = str(date).split('-')
+                    name_month = months_short[month]
 
-                if data["forecasts"][1]["hours"][(current_hour + i) % 24]["temp"] > 0:
-                    temp.setText("+" + str(data["forecasts"][1]["hours"][(current_hour + i) % 24]["temp"]))
-                elif data["forecasts"][1]["hours"][(current_hour + i) % 24]["hour"] < 0:
-                    temp.setText("-" + str(data["forecasts"][1]["hours"][(current_hour + i) % 24]["temp"]))
+                    name.setText(f'{day} {name_month}')
+
+                img.setPixmap(QPixmap(icons_128[data["forecasts"][1]["parts"]["day"]["icon"]]))
+
+                if data["forecasts"][i]["parts"]["day"]["temp_max"] > 0:
+                    max_temp.setText("+" + str(data["forecasts"][i]["parts"]["day"]["temp_max"]))
+                elif data["forecasts"][i]["parts"]["day"]["temp_max"] < 0:
+                    max_temp.setText("-" + str(data["forecasts"][i]["parts"]["day"]["temp_max"]))
                 else:
-                    temp.setText(str(data["forecasts"][1]["hours"][(current_hour + i) % 24]["temp"]))
+                    max_temp.setText(str(data["forecasts"][i]["parts"]["day"]["temp_max"]))
 
-            layout.addWidget(hour)
-            layout.addWidget(img)
-            layout.addWidget(temp)
+                if data["forecasts"][i]["parts"]["day"]["temp_min"] > 0:
+                    min_temp.setText("+" + str(data["forecasts"][i]["parts"]["night"]["temp_min"]))
+                elif data["forecasts"][i]["parts"]["day"]["temp_min"] < 0:
+                    min_temp.setText("-" + str(data["forecasts"][i]["parts"]["night"]["temp_min"]))
+                else:
+                    min_temp.setText(str(data["forecasts"][i]["parts"]["night"]["temp_min"]))
 
-            main_layout_hours.addWidget(widget)
+                max_min = QHBoxLayout()
+                max_min.addWidget(max_temp)
+                max_min.addWidget(min_temp)
 
-        main_widget_hours.setLayout(main_layout_hours)
-        self.hours_2.setWidget(main_widget_hours)
+                layout.addWidget(name, 0, 0)  # Размещаем name в строке 0, столбце 0
+                layout.addWidget(img, 1, 0, 1, 1)  # Размещаем img в строке 1, столбце 0, занимая 2 столбца
+                layout.addLayout(max_min, 2, 0)
 
-        self.city_2.setText(f'{city}')
+                main_layout_future.addWidget(widget)
 
-        if data["forecasts"][0]["hours"][current_hour]["temp"] > 0:
-            self.now_temp_2.setText("+" + str(data["forecasts"][0]["hours"][current_hour]["temp"]))
-        elif data["forecasts"][0]["hours"][current_hour]["hour"] < 0:
-            self.now_temp_2.setText("-" + str(data["forecasts"][0]["hours"][current_hour]["temp"]))
+            self.future_2.setWidget(main_widget_future)
+
+            current_hour = int(str(datetime.datetime.now().time()).split(":")[0])
+            main_layout_hours = QHBoxLayout()
+            main_widget_hours = QWidget()
+            main_widget_hours.setLayout(main_layout_hours)
+
+            for i in range(0, 25):
+                hour = QLabel()
+                hour.setMaximumSize(128, 40)
+                hour.setMinimumSize(128, 40)
+                hour.setStyleSheet("background-color: rgba(255, 255, 255, 100);\nborder: none;\nborder-radius: 15px;")
+                layout = QVBoxLayout()
+                widget = QWidget()
+                widget.setLayout(layout)
+
+                img = QLabel()
+                img.setMinimumSize(128, 128)
+                img.setMaximumSize(128, 128)
+                img.setStyleSheet('background-color: rgba(255, 255, 255, 100);\nborder: none;\nborder-radius: 15px;')
+
+                temp = QLabel()
+                temp.setMaximumSize(128, 40)
+                temp.setMinimumSize(128, 40)
+                temp.setStyleSheet("background-color: rgba(255, 255, 255, 100);\nborder: none;\nborder-radius: 15px;")
+
+                if current_hour + i <= 23:
+                    hour.setText(f'{str(data["forecasts"][0]["hours"][current_hour + i]["hour"]).zfill(2)}:00')
+                    img.setPixmap(QPixmap(icons_128[data["forecasts"][0]["hours"][current_hour + i]["icon"]]))
+
+                    if data["forecasts"][0]["hours"][current_hour + i]["temp"] > 0:
+                        temp.setText("+" + str(data["forecasts"][0]["hours"][current_hour + i]["temp"]))
+                    elif data["forecasts"][0]["hours"][current_hour + i]["hour"] < 0:
+                        temp.setText("-" + str(data["forecasts"][0]["hours"][current_hour + i]["temp"]))
+                    else:
+                        temp.setText(str(data["forecasts"][0]["hours"][current_hour + i]["temp"]))
+                else:
+                    hour.setText(f'{str(data["forecasts"][1]["hours"][(current_hour + i) % 24]["hour"]).zfill(2)}:00')
+                    img.setPixmap(QPixmap(icons_128[data["forecasts"][1]["hours"][(current_hour + i) % 24]["icon"]]))
+
+                    if data["forecasts"][1]["hours"][(current_hour + i) % 24]["temp"] > 0:
+                        temp.setText("+" + str(data["forecasts"][1]["hours"][(current_hour + i) % 24]["temp"]))
+                    elif data["forecasts"][1]["hours"][(current_hour + i) % 24]["hour"] < 0:
+                        temp.setText("-" + str(data["forecasts"][1]["hours"][(current_hour + i) % 24]["temp"]))
+                    else:
+                        temp.setText(str(data["forecasts"][1]["hours"][(current_hour + i) % 24]["temp"]))
+
+                layout.addWidget(hour)
+                layout.addWidget(img)
+                layout.addWidget(temp)
+
+                main_layout_hours.addWidget(widget)
+
+            main_widget_hours.setLayout(main_layout_hours)
+            self.hours_2.setWidget(main_widget_hours)
+
+            self.city_2.setText(f'{city}')
+
+            if data["forecasts"][0]["hours"][current_hour]["temp"] > 0:
+                self.now_temp_2.setText("+" + str(data["forecasts"][0]["hours"][current_hour]["temp"]))
+            elif data["forecasts"][0]["hours"][current_hour]["hour"] < 0:
+                self.now_temp_2.setText("-" + str(data["forecasts"][0]["hours"][current_hour]["temp"]))
+            else:
+                self.now_temp_2.setText(str(data["forecasts"][0]["hours"][current_hour]["temp"]))
+            # =======================================================================================
+            s = ''
+
+            if data["forecasts"][0]["parts"]["day"]["temp_max"] > 0:
+                s += '+' + f'{data["forecasts"][0]["parts"]["day"]["temp_max"]}' + '/'
+            elif data["forecasts"][0]["parts"]["day"]["temp_max"] < 0:
+                s += '-' + f'{data["forecasts"][0]["parts"]["day"]["temp_max"]}' + '/'
+            else:
+                s += f'{data["forecasts"][0]["parts"]["day"]["temp_max"]}' + '/'
+
+            if data["forecasts"][0]["parts"]["night"]["temp_min"] > 0:
+                s += '+' + f'{data["forecasts"][0]["parts"]["night"]["temp_min"]}'
+            elif data["forecasts"][0]["parts"]["night"]["temp_min"] < 0:
+                s += '-' + f'{data["forecasts"][0]["parts"]["night"]["temp_min"]}'
+            else:
+                s += f'{data["forecasts"][0]["parts"]["night"]["temp_min"]}'
+
+            self.maxmin_2.setText(s)
+
+            self.img_now_2.setPixmap(QPixmap(icons_256[data["forecasts"][0]["hours"][current_hour]["icon"]]))
+
+            self.description_2.setText(f'{data["forecasts"][0]["hours"][current_hour]["condition"]}')
+
+            self.label_130.setText(
+                f'{data["forecasts"][0]["hours"][current_hour]["wind_dir"]} {data["forecasts"][0]["hours"][current_hour]["wind_speed"]}м/с')
+            self.label_8.setText(f'{data["forecasts"][0]["hours"][current_hour]["pressure_mm"]}мм')
+            self.label_131.setText(f'{data["forecasts"][0]["hours"][current_hour]["humidity"]}%')
+
+            self.date_2.setText(
+                f'{datetime.datetime.now().day} {months[datetime.datetime.now().month]} {datetime.datetime.now().year}')
         else:
-            self.now_temp_2.setText(str(data["forecasts"][0]["hours"][current_hour]["temp"]))
-        # =======================================================================================
-        s = ''
-
-        if data["forecasts"][0]["parts"]["day"]["temp_max"] > 0:
-            s += '+' + f'{data["forecasts"][0]["parts"]["day"]["temp_max"]}' + '/'
-        elif data["forecasts"][0]["parts"]["day"]["temp_max"] < 0:
-            s += '-' + f'{data["forecasts"][0]["parts"]["day"]["temp_max"]}' + '/'
-        else:
-            s += f'{data["forecasts"][0]["parts"]["day"]["temp_max"]}' + '/'
-
-        if data["forecasts"][0]["parts"]["night"]["temp_min"] > 0:
-            s += '+' + f'{data["forecasts"][0]["parts"]["night"]["temp_min"]}'
-        elif data["forecasts"][0]["parts"]["night"]["temp_min"] < 0:
-            s += '-' + f'{data["forecasts"][0]["parts"]["night"]["temp_min"]}'
-        else:
-            s += f'{data["forecasts"][0]["parts"]["night"]["temp_min"]}'
-
-        self.maxmin_2.setText(s)
-
-        self.img_now_2.setPixmap(QPixmap(icons_256[data["forecasts"][0]["hours"][current_hour]["icon"]]))
-
-        self.description_2.setText(f'{data["forecasts"][0]["hours"][current_hour]["condition"]}')
-
-        self.label_130.setText(
-            f'{data["forecasts"][0]["hours"][current_hour]["wind_dir"]} {data["forecasts"][0]["hours"][current_hour]["wind_speed"]}м/с')
-        self.label_8.setText(f'{data["forecasts"][0]["hours"][current_hour]["pressure_mm"]}мм')
-        self.label_131.setText(f'{data["forecasts"][0]["hours"][current_hour]["humidity"]}%')
-
-        self.date_2.setText(
-            f'{datetime.datetime.now().day} {months[datetime.datetime.now().month]} {datetime.datetime.now().year}')
-
-    def add_page_f(self):
-        self.stackedWidget.setCurrentIndex(2)
-        self.homeb.setStyleSheet("background-color: rgba(255, 255, 255, 0);\nborder: none;\nborder-radius: 15px;")
-        self.searchb.setStyleSheet("background-color: rgba(255, 255, 255, 0);\nborder: none;\nborder-radius: 15px;")
-        self.profileb.setStyleSheet("background-color: rgba(255, 255, 255, 0);\nborder: none;\nborder-radius: 15px;")
+            self.statusBar().show()
+            self.statusBar().showMessage("Некорректный ввод")
+            self.statusBar().setStyleSheet('background-color: rgba(255, 255, 255, 100); font-size: 20px;')
 
     def profile_page_f(self):
         self.stackedWidget.setCurrentIndex(3)
         self.homeb.setStyleSheet("background-color: rgba(255, 255, 255, 0);\nborder: none;\nborder-radius: 15px;")
         self.searchb.setStyleSheet("background-color: rgba(255, 255, 255, 0);\nborder: none;\nborder-radius: 15px;")
         self.profileb.setStyleSheet("background-color: rgba(255, 255, 255, 100);\nborder: none;\nborder-radius: 15px;")
+        self.statusBar().hide()
 
     def mousePressEvent(self, event):
         if event.button() == Qt.LeftButton:
