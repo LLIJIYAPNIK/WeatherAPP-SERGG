@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1280</width>
-    <height>720</height>
+    <height>722</height>
    </rect>
   </property>
   <property name="minimumSize">
@@ -67,7 +67,7 @@ border-radius: 15px;</string>
      <string notr="true">background-color: #151515;</string>
     </property>
     <property name="currentIndex">
-     <number>4</number>
+     <number>0</number>
     </property>
     <widget class="QWidget" name="main_page">
      <property name="styleSheet">
@@ -2435,6 +2435,19 @@ border-radius: 5px;</string>
         </item>
        </layout>
       </widget>
+      <widget class="QPushButton" name="favorite">
+       <property name="geometry">
+        <rect>
+         <x>500</x>
+         <y>380</y>
+         <width>91</width>
+         <height>91</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>favorite</string>
+       </property>
+      </widget>
      </widget>
     </widget>
     <widget class="QWidget" name="search_page">
@@ -3530,7 +3543,7 @@ border-radius: 15px;</string>
       <property name="geometry">
        <rect>
         <x>620</x>
-        <y>300</y>
+        <y>320</y>
         <width>641</width>
         <height>261</height>
        </rect>
@@ -4839,6 +4852,19 @@ border-radius: 5px;</string>
          </widget>
         </item>
        </layout>
+      </widget>
+      <widget class="QPushButton" name="favorite_2">
+       <property name="geometry">
+        <rect>
+         <x>500</x>
+         <y>380</y>
+         <width>91</width>
+         <height>91</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>favorite</string>
+       </property>
       </widget>
      </widget>
     </widget>

@@ -14,7 +14,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
-        MainWindow.resize(1280, 720)
+        MainWindow.resize(1280, 722)
         MainWindow.setMinimumSize(QtCore.QSize(3, 0))
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
@@ -969,6 +969,9 @@ class Ui_MainWindow(object):
         self.label_3.setPixmap(QtGui.QPixmap("icons/free-icon-humidity-1975551.png"))
         self.label_3.setObjectName("label_3")
         self.gridLayout_21.addWidget(self.label_3, 0, 2, 1, 1)
+        self.favorite = QtWidgets.QPushButton(self.today_gb)
+        self.favorite.setGeometry(QtCore.QRect(500, 380, 91, 91))
+        self.favorite.setObjectName("favorite")
         self.stackedWidget.addWidget(self.main_page)
         self.search_page = QtWidgets.QWidget()
         self.search_page.setObjectName("search_page")
@@ -1417,7 +1420,7 @@ class Ui_MainWindow(object):
         self.horizontalLayout_5.addWidget(self.h10_2)
         self.hours_2.setWidget(self.scrollAreaWidgetContents_4)
         self.future_2 = QtWidgets.QScrollArea(self.seach_city_page)
-        self.future_2.setGeometry(QtCore.QRect(620, 300, 641, 261))
+        self.future_2.setGeometry(QtCore.QRect(620, 320, 641, 261))
         self.future_2.setStyleSheet("border: none;")
         self.future_2.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
         self.future_2.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
@@ -1926,6 +1929,9 @@ class Ui_MainWindow(object):
         self.label_132.setPixmap(QtGui.QPixmap("icons/free-icon-humidity-1975551.png"))
         self.label_132.setObjectName("label_132")
         self.gridLayout_32.addWidget(self.label_132, 0, 2, 1, 1)
+        self.favorite_2 = QtWidgets.QPushButton(self.today_gb_2)
+        self.favorite_2.setGeometry(QtCore.QRect(500, 380, 91, 91))
+        self.favorite_2.setObjectName("favorite_2")
         self.stackedWidget.addWidget(self.seach_city_page)
         self.horizontalLayoutWidget = QtWidgets.QWidget(self.centralwidget)
         self.horizontalLayoutWidget.setGeometry(QtCore.QRect(40, 590, 1201, 130))
@@ -1975,7 +1981,7 @@ class Ui_MainWindow(object):
         MainWindow.setCentralWidget(self.centralwidget)
 
         self.retranslateUi(MainWindow)
-        self.stackedWidget.setCurrentIndex(4)
+        self.stackedWidget.setCurrentIndex(0)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def retranslateUi(self, MainWindow):
@@ -1984,7 +1990,9 @@ class Ui_MainWindow(object):
         self.label_5.setText(_translate("MainWindow", "TextLabel"))
         self.label_4.setText(_translate("MainWindow", "TextLabel"))
         self.label_6.setText(_translate("MainWindow", "TextLabel"))
+        self.favorite.setText(_translate("MainWindow", "favorite"))
         self.search_btn.setText(_translate("MainWindow", "Поиск"))
         self.label_8.setText(_translate("MainWindow", "TextLabel"))
         self.label_130.setText(_translate("MainWindow", "TextLabel"))
         self.label_131.setText(_translate("MainWindow", "TextLabel"))
+        self.favorite_2.setText(_translate("MainWindow", "favorite"))

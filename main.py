@@ -18,11 +18,11 @@ from current_city import get_current_city, get_current_city_coords
 connection = sqlite3.connect('cities.db')
 cur = connection.cursor()
 
-
-# lat, lon = get_current_coords(cur)
-
-# with open('test_1.json', 'w') as f:
-#     json.dump(weather_api(lat, lon), f, ensure_ascii=False, indent=4)
+with open('favorite.txt', encoding='utf8') as f:
+    data_f = f.readlines()
+    if len(data_f) == 0:
+        initial_city = get_current_city()
+        open('favorite.txt', 'w', encoding='utf8').write(initial_city)
 
 
 class MainWindow(QMainWindow, Ui_MainWindow):
@@ -50,10 +50,48 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.homeb.clicked.connect(self.home_page_f)
         self.searchb.clicked.connect(self.search_page_f)
         self.profileb.clicked.connect(self.profile_page_f)
+        self.favorite.clicked.connect(self.do_favorite)
+        self.favorite_2.clicked.connect(self.do_favorite_2)
 
         self.stackedWidget.setCurrentIndex(0)
 
         self.home_page_f()
+
+    def do_favorite(self):
+        name = self.city.text()
+
+        with open('favorite.txt', 'r', encoding='utf8') as f:
+            data = set([line.strip() for line in f])
+
+        if name in data:
+            data.remove(name)
+            self.favorite.setIcon(QIcon('icons/free-icon-bookmark-3983871.png'))
+        else:
+            data.add(name)
+            self.favorite.setIcon(QIcon('icons/free-icon-bookmark-3983855.png'))
+
+        with open('favorite.txt', 'w', encoding='utf8') as f:
+            for value in data:
+                f.write(f'{value}\n')
+
+    def do_favorite_2(self):
+        name = self.city_2.text()
+
+        with open('favorite.txt', 'r', encoding='utf8') as f:
+            data = set([line.strip() for line in f])
+
+        if name in data:
+            data.remove(name)
+            self.favorite_2.setIcon(QIcon('icons/free-icon-bookmark-3983871.png'))
+        else:
+            data.add(name)
+            self.favorite_2.setIcon(QIcon('icons/free-icon-bookmark-3983855.png'))
+
+        with open('favorite.txt', 'w', encoding='utf8') as f:
+            for value in data:
+                f.write(f'{value}\n')
+
+    # сделать, чтобы оно робило, такое же для поиска и остаётся только настройки, но они вроде изи)
 
     def home_page_f(self):
         self.stackedWidget.setCurrentIndex(0)
@@ -235,6 +273,21 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.date.setText(
             f'{datetime.datetime.now().day} {months[datetime.datetime.now().month]} {datetime.datetime.now().year}')
 
+        self.favorite.setText('')
+
+        name = self.city.text()
+
+        with open('favorite.txt', 'r', encoding='utf8') as f:
+            data = set([line.strip() for line in f])
+
+        print(name in data)
+        print(name)
+
+        if name in data:
+            self.favorite.setIcon(QIcon('icons/free-icon-bookmark-3983855.png'))
+        else:
+            self.favorite.setIcon(QIcon('icons/free-icon-bookmark-3983871.png'))
+
     def search_page_f(self):
         self.stackedWidget.setCurrentIndex(1)
         self.homeb.setStyleSheet("background-color: rgba(255, 255, 255, 0);\nborder: none;\nborder-radius: 15px;")
@@ -258,10 +311,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         print(self.search_city_v)
 
     def check_city_f(self):
-        if self.search_city_v != "" and self.search_city_v.lower() in [str(x[0]).lower() for x in list(cur.execute("SELECT Город FROM city").fetchall())]:
+        if self.search_city_v != "" and self.search_city_v.lower() in [str(x[0]).lower() for x in list(cur.execute(
+                "SELECT Город FROM city").fetchall())]:
             self.statusBar().hide()
             city = self.search_city_v
-            print(city, self.search_city_v)
 
             self.stackedWidget.setCurrentIndex(4)
 
@@ -287,12 +340,14 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 max_temp = QLabel()
                 max_temp.setMaximumSize(60, 40)
                 max_temp.setMinimumSize(60, 40)
-                max_temp.setStyleSheet("background-color: rgba(255, 255, 255, 100);\nborder: none;\nborder-radius: 15px;")
+                max_temp.setStyleSheet(
+                    "background-color: rgba(255, 255, 255, 100);\nborder: none;\nborder-radius: 15px;")
 
                 min_temp = QLabel()
                 min_temp.setMaximumSize(60, 40)
                 min_temp.setMinimumSize(60, 40)
-                min_temp.setStyleSheet("background-color: rgba(255, 255, 255, 100);\nborder: none;\nborder-radius: 15px;")
+                min_temp.setStyleSheet(
+                    "background-color: rgba(255, 255, 255, 100);\nborder: none;\nborder-radius: 15px;")
 
                 layout = QGridLayout()
                 widget = QWidget()
@@ -430,6 +485,21 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
             self.date_2.setText(
                 f'{datetime.datetime.now().day} {months[datetime.datetime.now().month]} {datetime.datetime.now().year}')
+
+            self.favorite_2.setText('')
+
+            name = self.city_2.text()
+
+            with open('favorite.txt', 'r', encoding='utf8') as f:
+                data = set([line.strip() for line in f])
+
+            print(name in data)
+            print(name)
+
+            if name in data:
+                self.favorite_2.setIcon(QIcon('icons/free-icon-bookmark-3983855.png'))
+            else:
+                self.favorite_2.setIcon(QIcon('icons/free-icon-bookmark-3983871.png'))
         else:
             self.statusBar().show()
             self.statusBar().showMessage("Некорректный ввод")
