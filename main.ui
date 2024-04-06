@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1280</width>
-    <height>722</height>
+    <height>710</height>
    </rect>
   </property>
   <property name="minimumSize">
@@ -30,10 +30,13 @@
      </rect>
     </property>
     <property name="styleSheet">
-     <string notr="true">background-color: #151515;</string>
+     <string notr="true"/>
     </property>
     <property name="text">
      <string/>
+    </property>
+    <property name="pixmap">
+     <pixmap>bg_imgs/abstract-gradient-swirls-1982819.jpg</pixmap>
     </property>
    </widget>
    <widget class="QLabel" name="bg_buttons">
@@ -64,14 +67,14 @@ border-radius: 15px;</string>
      </rect>
     </property>
     <property name="styleSheet">
-     <string notr="true">background-color: #151515;</string>
+     <string notr="true">background-color: rgba(255, 255, 255, 0);</string>
     </property>
     <property name="currentIndex">
-     <number>0</number>
+     <number>4</number>
     </property>
     <widget class="QWidget" name="main_page">
      <property name="styleSheet">
-      <string notr="true">background-color: rgba(0, 0, 0, 255);</string>
+      <string notr="true">background-color: rgba(0, 0, 0, 0);</string>
      </property>
      <widget class="QScrollArea" name="future">
       <property name="geometry">
@@ -2195,6 +2198,9 @@ border-radius: 15px;</string>
          <height>52</height>
         </rect>
        </property>
+       <property name="styleSheet">
+        <string notr="true">font-size: 26px; padding-left: 10px;</string>
+       </property>
        <property name="text">
         <string/>
        </property>
@@ -2208,8 +2214,14 @@ border-radius: 15px;</string>
          <height>101</height>
         </rect>
        </property>
+       <property name="styleSheet">
+        <string notr="true">font-size: 30px; padding-right: 5px;</string>
+       </property>
        <property name="text">
         <string/>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
        </property>
       </widget>
       <widget class="QLabel" name="maxmin">
@@ -2221,8 +2233,14 @@ border-radius: 15px;</string>
          <height>52</height>
         </rect>
        </property>
+       <property name="styleSheet">
+        <string notr="true">font-size: 20px; padding-right: 5px;</string>
+       </property>
        <property name="text">
         <string/>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
        </property>
       </widget>
       <widget class="QLabel" name="img_now">
@@ -2259,6 +2277,9 @@ border-radius: 15px;</string>
          <height>52</height>
         </rect>
        </property>
+       <property name="styleSheet">
+        <string notr="true">font-size: 20px; padding-left: 10px;</string>
+       </property>
        <property name="text">
         <string/>
        </property>
@@ -2272,15 +2293,21 @@ border-radius: 15px;</string>
          <height>52</height>
         </rect>
        </property>
+       <property name="styleSheet">
+        <string notr="true">font-size: 20px; padding-right: 10px;</string>
+       </property>
        <property name="text">
         <string/>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
        </property>
       </widget>
       <widget class="QWidget" name="gridLayoutWidget">
        <property name="geometry">
         <rect>
          <x>0</x>
-         <y>390</y>
+         <y>400</y>
          <width>206</width>
          <height>136</height>
         </rect>
@@ -2328,10 +2355,14 @@ border-radius: 5px;</string>
           </property>
           <property name="styleSheet">
            <string notr="true">background-color: rgba(255, 255, 255, 0);
-border-radius: 5px;</string>
+border-radius: 5px;
+font-size: 14px;</string>
           </property>
           <property name="text">
            <string>TextLabel</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
           </property>
          </widget>
         </item>
@@ -2377,10 +2408,14 @@ border-radius: 5px;</string>
           </property>
           <property name="styleSheet">
            <string notr="true">background-color: rgba(255, 255, 255, 0);
-border-radius: 5px;</string>
+border-radius: 5px;
+font-size: 14px;</string>
           </property>
           <property name="text">
            <string>TextLabel</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
           </property>
          </widget>
         </item>
@@ -2400,10 +2435,14 @@ border-radius: 5px;</string>
           </property>
           <property name="styleSheet">
            <string notr="true">background-color: rgba(255, 255, 255, 0);
-border-radius: 5px;</string>
+border-radius: 5px;
+font-size: 14px;</string>
           </property>
           <property name="text">
            <string>TextLabel</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
           </property>
          </widget>
         </item>
@@ -2489,7 +2528,93 @@ border-radius: 8px;</string>
      </widget>
     </widget>
     <widget class="QWidget" name="add_page"/>
-    <widget class="QWidget" name="settings_page"/>
+    <widget class="QWidget" name="settings_page">
+     <widget class="QComboBox" name="choose_city">
+      <property name="geometry">
+       <rect>
+        <x>60</x>
+        <y>150</y>
+        <width>291</width>
+        <height>91</height>
+       </rect>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">background-color: rgba(255, 255, 255, 100);
+border: none;
+border-radius: 8px;
+font-size: 18px;</string>
+      </property>
+     </widget>
+     <widget class="QScrollArea" name="my_cities">
+      <property name="geometry">
+       <rect>
+        <x>590</x>
+        <y>140</y>
+        <width>641</width>
+        <height>341</height>
+       </rect>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">border: none</string>
+      </property>
+      <property name="verticalScrollBarPolicy">
+       <enum>Qt::ScrollBarAlwaysOff</enum>
+      </property>
+      <property name="horizontalScrollBarPolicy">
+       <enum>Qt::ScrollBarAlwaysOff</enum>
+      </property>
+      <property name="widgetResizable">
+       <bool>true</bool>
+      </property>
+      <widget class="QWidget" name="scrollAreaWidgetContents_5">
+       <property name="geometry">
+        <rect>
+         <x>0</x>
+         <y>0</y>
+         <width>641</width>
+         <height>341</height>
+        </rect>
+       </property>
+       <layout class="QHBoxLayout" name="horizontalLayout_6"/>
+      </widget>
+     </widget>
+     <widget class="QLabel" name="default_city">
+      <property name="geometry">
+       <rect>
+        <x>60</x>
+        <y>30</y>
+        <width>391</width>
+        <height>71</height>
+       </rect>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">background-color: rgba(255, 255, 255, 100);
+border: none;
+border-radius: 8px; font-size: 26px;</string>
+      </property>
+      <property name="text">
+       <string>По умолчанию:</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_173">
+      <property name="geometry">
+       <rect>
+        <x>610</x>
+        <y>30</y>
+        <width>561</width>
+        <height>71</height>
+       </rect>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">background-color: rgba(255, 255, 255, 100);
+border: none;
+border-radius: 8px; font-size: 26px;</string>
+      </property>
+      <property name="text">
+       <string>Мои города</string>
+      </property>
+     </widget>
+    </widget>
     <widget class="QWidget" name="seach_city_page">
      <widget class="QScrollArea" name="hours_2">
       <property name="geometry">
@@ -4613,6 +4738,9 @@ border-radius: 15px;</string>
          <height>52</height>
         </rect>
        </property>
+       <property name="styleSheet">
+        <string notr="true">font-size: 26px; padding-left: 10px;</string>
+       </property>
        <property name="text">
         <string/>
        </property>
@@ -4626,8 +4754,14 @@ border-radius: 15px;</string>
          <height>101</height>
         </rect>
        </property>
+       <property name="styleSheet">
+        <string notr="true">font-size: 30px; padding-right: 5px;</string>
+       </property>
        <property name="text">
         <string/>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
        </property>
       </widget>
       <widget class="QLabel" name="maxmin_2">
@@ -4639,8 +4773,14 @@ border-radius: 15px;</string>
          <height>52</height>
         </rect>
        </property>
+       <property name="styleSheet">
+        <string notr="true">font-size: 20px; padding-right: 5px;</string>
+       </property>
        <property name="text">
         <string/>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
        </property>
       </widget>
       <widget class="QLabel" name="img_now_2">
@@ -4677,6 +4817,9 @@ border-radius: 15px;</string>
          <height>52</height>
         </rect>
        </property>
+       <property name="styleSheet">
+        <string notr="true">font-size: 20px; padding-left: 10px;</string>
+       </property>
        <property name="text">
         <string/>
        </property>
@@ -4690,15 +4833,21 @@ border-radius: 15px;</string>
          <height>52</height>
         </rect>
        </property>
+       <property name="styleSheet">
+        <string notr="true">font-size: 20px; padding-right: 10px;</string>
+       </property>
        <property name="text">
         <string/>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
        </property>
       </widget>
       <widget class="QWidget" name="gridLayoutWidget_2">
        <property name="geometry">
         <rect>
          <x>0</x>
-         <y>390</y>
+         <y>400</y>
          <width>206</width>
          <height>136</height>
         </rect>
@@ -4746,10 +4895,14 @@ border-radius: 5px;</string>
           </property>
           <property name="styleSheet">
            <string notr="true">background-color: rgba(255, 255, 255, 0);
-border-radius: 5px;</string>
+border-radius: 5px;
+font-size: 14px;</string>
           </property>
           <property name="text">
            <string>TextLabel</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
           </property>
          </widget>
         </item>
@@ -4795,10 +4948,14 @@ border-radius: 5px;</string>
           </property>
           <property name="styleSheet">
            <string notr="true">background-color: rgba(255, 255, 255, 0);
-border-radius: 5px;</string>
+border-radius: 5px;
+font-size: 14px;</string>
           </property>
           <property name="text">
            <string>TextLabel</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
           </property>
          </widget>
         </item>
@@ -4818,10 +4975,14 @@ border-radius: 5px;</string>
           </property>
           <property name="styleSheet">
            <string notr="true">background-color: rgba(255, 255, 255, 0);
-border-radius: 5px;</string>
+border-radius: 5px;
+font-size: 14px;</string>
           </property>
           <property name="text">
            <string>TextLabel</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
           </property>
          </widget>
         </item>

@@ -4,13 +4,13 @@ import requests
 
 
 def weather_api(lat, lon):
-    access_key = '251f5b1c-ba22-4437-a2fe-86a9428986fe'
+    access_key = '28e958ab-e685-424f-bdf8-3d1c5a2536d1'
 
     headers = {
         'X-Yandex-Weather-Key': access_key
     }
 
-    response = requests.get(f'https://api.weather.yandex.ru/v2/forecast?lat={lat}&lon={lon}', headers=headers)
+    response = requests.get(f'https://api.weather.yandex.ru/v2/forecast?lat={lat}&lon={lon}&lang=ru_RU', headers=headers)
     return response.json()
 
 

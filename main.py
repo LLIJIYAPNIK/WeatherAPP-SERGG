@@ -1,19 +1,17 @@
 import datetime
 import sys
 from PyQt5 import QtCore, uic
-from PyQt5.QtCore import Qt
+from PyQt5.QtCore import Qt, QSignalBlocker
 from PyQt5.QtGui import QIcon, QPixmap
-from PyQt5.QtWidgets import QMainWindow, QApplication, QComboBox, QLabel, QCompleter, QVBoxLayout, QGridLayout, QWidget, \
-    QHBoxLayout, QFrame, QListView, QStyledItemDelegate
+from PyQt5.QtWidgets import QMainWindow, QApplication, QLabel, QCompleter, QVBoxLayout, QGridLayout, QWidget, \
+    QHBoxLayout, QPushButton
 import sqlite3
-import requests
-import json
 from weather_data import weather_api
 from icons import icons_128, icons_256
 from time_dict import months, months_short
-from current_city import get_current_coords
 from main_design import Ui_MainWindow
 from current_city import get_current_city, get_current_city_coords
+from weather_dict import weather_tr
 
 connection = sqlite3.connect('cities.db')
 cur = connection.cursor()
@@ -40,6 +38,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.search_city_v = ''
         self.search_btn.clicked.connect(self.check_city_f)
         self.search_le.textChanged.connect(self.on_text_changed)
+        self.last_city = ''
 
         self.initUI()
 
@@ -49,11 +48,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     def initUI(self):
         self.homeb.clicked.connect(self.home_page_f)
         self.searchb.clicked.connect(self.search_page_f)
-        self.profileb.clicked.connect(self.profile_page_f)
+        self.profileb.clicked.connect(self.settings_page_f)
         self.favorite.clicked.connect(self.do_favorite)
         self.favorite_2.clicked.connect(self.do_favorite_2)
-
-        self.stackedWidget.setCurrentIndex(0)
+        self.stackedWidget.setStyleSheet("background-color: rgba(255, 255, 255, 0)")
 
         self.home_page_f()
 
@@ -103,9 +101,11 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         with open('last_city', encoding='utf8') as f:
             city = f.readline()
             if city:
-                self.last_city = city
+                self.last_city = city.strip()
             else:
                 self.last_city = get_current_city()
+                open('last_city', 'w', encoding='utf8').write(self.last_city)
+        self.choose_city.currentIndexChanged.connect(self.on_combo_box_changed)
 
         lat, lon = get_current_city_coords(cur, self.last_city)
 
@@ -119,22 +119,26 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             name = QLabel()
             name.setMaximumSize(128, 40)
             name.setMinimumSize(128, 40)
-            name.setStyleSheet("background-color: rgba(255, 255, 255, 100);\nborder: none;\nborder-radius: 15px;")
+            name.setStyleSheet("background-color: rgba(255, 255, 255, 100);\nborder: none;\nborder-radius: 15px; font-size: 20px;")
+            name.setAlignment(Qt.AlignCenter)
 
             img = QLabel()
             img.setMinimumSize(128, 128)
             img.setMaximumSize(128, 128)
-            img.setStyleSheet('background-color: rgba(255, 255, 255, 100);\nborder: none;\nborder-radius: 15px;')
+            img.setStyleSheet('background-color: rgba(255, 255, 255, 100);\nborder: none;\nborder-radius: 15px; font-size: 15px;')
+            img.setAlignment(Qt.AlignCenter)
 
             max_temp = QLabel()
             max_temp.setMaximumSize(60, 40)
             max_temp.setMinimumSize(60, 40)
-            max_temp.setStyleSheet("background-color: rgba(255, 255, 255, 100);\nborder: none;\nborder-radius: 15px;")
+            max_temp.setStyleSheet("background-color: rgba(255, 255, 255, 100);\nborder: none;\nborder-radius: 15px; font-size: 15px;")
+            max_temp.setAlignment(Qt.AlignCenter)
 
             min_temp = QLabel()
             min_temp.setMaximumSize(60, 40)
             min_temp.setMinimumSize(60, 40)
-            min_temp.setStyleSheet("background-color: rgba(255, 255, 255, 100);\nborder: none;\nborder-radius: 15px;")
+            min_temp.setStyleSheet("background-color: rgba(255, 255, 255, 100);\nborder: none;\nborder-radius: 15px; font-size: 15px;")
+            min_temp.setAlignment(Qt.AlignCenter)
 
             layout = QGridLayout()
             widget = QWidget()
@@ -156,15 +160,15 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
             if data["forecasts"][i]["parts"]["day"]["temp_max"] > 0:
                 max_temp.setText("+" + str(data["forecasts"][i]["parts"]["day"]["temp_max"]))
-            elif data["forecasts"][i]["parts"]["day"]["temp_max"] < 0:
-                max_temp.setText("-" + str(data["forecasts"][i]["parts"]["day"]["temp_max"]))
+            elif int(data["forecasts"][i]["parts"]["day"]["temp_max"]) < 0:
+                max_temp.setText(str(data["forecasts"][i]["parts"]["day"]["temp_max"]))
             else:
                 max_temp.setText(str(data["forecasts"][i]["parts"]["day"]["temp_max"]))
 
             if data["forecasts"][i]["parts"]["day"]["temp_min"] > 0:
                 min_temp.setText("+" + str(data["forecasts"][i]["parts"]["night"]["temp_min"]))
-            elif data["forecasts"][i]["parts"]["day"]["temp_min"] < 0:
-                min_temp.setText("-" + str(data["forecasts"][i]["parts"]["night"]["temp_min"]))
+            elif int(data["forecasts"][i]["parts"]["day"]["temp_min"]) < 0:
+                min_temp.setText(str(data["forecasts"][i]["parts"]["night"]["temp_min"]))
             else:
                 min_temp.setText(str(data["forecasts"][i]["parts"]["night"]["temp_min"]))
 
@@ -189,7 +193,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             hour = QLabel()
             hour.setMaximumSize(128, 40)
             hour.setMinimumSize(128, 40)
-            hour.setStyleSheet("background-color: rgba(255, 255, 255, 100);\nborder: none;\nborder-radius: 15px;")
+            hour.setStyleSheet("background-color: rgba(255, 255, 255, 100);\nborder: none;\nborder-radius: 15px; font-size: 20px;")
+            hour.setAlignment(Qt.AlignCenter)
             layout = QVBoxLayout()
             widget = QWidget()
             widget.setLayout(layout)
@@ -197,12 +202,14 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             img = QLabel()
             img.setMinimumSize(128, 128)
             img.setMaximumSize(128, 128)
-            img.setStyleSheet('background-color: rgba(255, 255, 255, 100);\nborder: none;\nborder-radius: 15px;')
+            img.setStyleSheet('background-color: rgba(255, 255, 255, 100);\nborder: none;\nborder-radius: 15px; font-size: 15px;')
+            img.setAlignment(Qt.AlignCenter)
 
             temp = QLabel()
             temp.setMaximumSize(128, 40)
             temp.setMinimumSize(128, 40)
-            temp.setStyleSheet("background-color: rgba(255, 255, 255, 100);\nborder: none;\nborder-radius: 15px;")
+            temp.setStyleSheet("background-color: rgba(255, 255, 255, 100);\nborder: none;\nborder-radius: 15px; font-size: 15px;")
+            temp.setAlignment(Qt.AlignCenter)
 
             if current_hour + i <= 23:
                 hour.setText(f'{str(data["forecasts"][0]["hours"][current_hour + i]["hour"]).zfill(2)}:00')
@@ -210,8 +217,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
                 if data["forecasts"][0]["hours"][current_hour + i]["temp"] > 0:
                     temp.setText("+" + str(data["forecasts"][0]["hours"][current_hour + i]["temp"]))
-                elif data["forecasts"][0]["hours"][current_hour + i]["hour"] < 0:
-                    temp.setText("-" + str(data["forecasts"][0]["hours"][current_hour + i]["temp"]))
+                elif int(data["forecasts"][0]["hours"][current_hour + i]["hour"]) < 0:
+                    temp.setText(str(data["forecasts"][0]["hours"][current_hour + i]["temp"]))
                 else:
                     temp.setText(str(data["forecasts"][0]["hours"][current_hour + i]["temp"]))
             else:
@@ -220,8 +227,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
                 if data["forecasts"][1]["hours"][(current_hour + i) % 24]["temp"] > 0:
                     temp.setText("+" + str(data["forecasts"][1]["hours"][(current_hour + i) % 24]["temp"]))
-                elif data["forecasts"][1]["hours"][(current_hour + i) % 24]["hour"] < 0:
-                    temp.setText("-" + str(data["forecasts"][1]["hours"][(current_hour + i) % 24]["temp"]))
+                elif int(data["forecasts"][1]["hours"][(current_hour + i) % 24]["hour"]) < 0:
+                    temp.setText(str(data["forecasts"][1]["hours"][(current_hour + i) % 24]["temp"]))
                 else:
                     temp.setText(str(data["forecasts"][1]["hours"][(current_hour + i) % 24]["temp"]))
 
@@ -238,8 +245,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         if data["forecasts"][0]["hours"][current_hour]["temp"] > 0:
             self.now_temp.setText("+" + str(data["forecasts"][0]["hours"][current_hour]["temp"]))
-        elif data["forecasts"][0]["hours"][current_hour]["hour"] < 0:
-            self.now_temp.setText("-" + str(data["forecasts"][0]["hours"][current_hour]["temp"]))
+        elif int(data["forecasts"][0]["hours"][current_hour]["hour"]) < 0:
+            self.now_temp.setText(str(data["forecasts"][0]["hours"][current_hour]["temp"]))
         else:
             self.now_temp.setText(str(data["forecasts"][0]["hours"][current_hour]["temp"]))
         # =======================================================================================
@@ -247,15 +254,15 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         if data["forecasts"][0]["parts"]["day"]["temp_max"] > 0:
             s += '+' + f'{data["forecasts"][0]["parts"]["day"]["temp_max"]}' + '/'
-        elif data["forecasts"][0]["parts"]["day"]["temp_max"] < 0:
-            s += '-' + f'{data["forecasts"][0]["parts"]["day"]["temp_max"]}' + '/'
+        elif int(data["forecasts"][0]["parts"]["day"]["temp_max"]) < 0:
+            s += f'{data["forecasts"][0]["parts"]["day"]["temp_max"]}' + '/'
         else:
             s += f'{data["forecasts"][0]["parts"]["day"]["temp_max"]}' + '/'
 
         if data["forecasts"][0]["parts"]["night"]["temp_min"] > 0:
             s += '+' + f'{data["forecasts"][0]["parts"]["night"]["temp_min"]}'
-        elif data["forecasts"][0]["parts"]["night"]["temp_min"] < 0:
-            s += '-' + f'{data["forecasts"][0]["parts"]["night"]["temp_min"]}'
+        elif int(data["forecasts"][0]["parts"]["night"]["temp_min"]) < 0:
+            s += f'{data["forecasts"][0]["parts"]["night"]["temp_min"]}'
         else:
             s += f'{data["forecasts"][0]["parts"]["night"]["temp_min"]}'
 
@@ -263,7 +270,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         self.img_now.setPixmap(QPixmap(icons_256[data["forecasts"][0]["hours"][current_hour]["icon"]]))
 
-        self.description.setText(f'{data["forecasts"][0]["hours"][current_hour]["condition"]}')
+        self.description.setText(f'{weather_tr[data["forecasts"][0]["hours"][current_hour]["condition"]]}')
 
         self.label_4.setText(
             f'{data["forecasts"][0]["hours"][current_hour]["wind_dir"]} {data["forecasts"][0]["hours"][current_hour]["wind_speed"]}м/с')
@@ -279,9 +286,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         with open('favorite.txt', 'r', encoding='utf8') as f:
             data = set([line.strip() for line in f])
-
-        print(name in data)
-        print(name)
 
         if name in data:
             self.favorite.setIcon(QIcon('icons/free-icon-bookmark-3983855.png'))
@@ -306,9 +310,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         popup.setStyleSheet("background-color: rgba(255, 255, 255, 100); color: black; font-size: 26px;")
 
         city = self.search_le.text()
-        print(city)
         self.search_city_v = city
-        print(self.search_city_v)
 
     def check_city_f(self):
         if self.search_city_v != "" and self.search_city_v.lower() in [str(x[0]).lower() for x in list(cur.execute(
@@ -330,24 +332,28 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 name = QLabel()
                 name.setMaximumSize(128, 40)
                 name.setMinimumSize(128, 40)
-                name.setStyleSheet("background-color: rgba(255, 255, 255, 100);\nborder: none;\nborder-radius: 15px;")
+                name.setStyleSheet("background-color: rgba(255, 255, 255, 100);\nborder: none;\nborder-radius: 15px; font-size: 20px;")
+                name.setAlignment(Qt.AlignCenter)
 
                 img = QLabel()
                 img.setMinimumSize(128, 128)
                 img.setMaximumSize(128, 128)
-                img.setStyleSheet('background-color: rgba(255, 255, 255, 100);\nborder: none;\nborder-radius: 15px;')
+                img.setStyleSheet('background-color: rgba(255, 255, 255, 100);\nborder: none;\nborder-radius: 15px; font-size: 15px;')
+                img.setAlignment(Qt.AlignCenter)
 
                 max_temp = QLabel()
                 max_temp.setMaximumSize(60, 40)
                 max_temp.setMinimumSize(60, 40)
                 max_temp.setStyleSheet(
-                    "background-color: rgba(255, 255, 255, 100);\nborder: none;\nborder-radius: 15px;")
+                    "background-color: rgba(255, 255, 255, 100);\nborder: none;\nborder-radius: 15px; font-size: 15px;")
+                max_temp.setAlignment(Qt.AlignCenter)
 
                 min_temp = QLabel()
                 min_temp.setMaximumSize(60, 40)
                 min_temp.setMinimumSize(60, 40)
                 min_temp.setStyleSheet(
-                    "background-color: rgba(255, 255, 255, 100);\nborder: none;\nborder-radius: 15px;")
+                    "background-color: rgba(255, 255, 255, 100);\nborder: none;\nborder-radius: 15px; font-size: 15px;")
+                min_temp.setAlignment(Qt.AlignCenter)
 
                 layout = QGridLayout()
                 widget = QWidget()
@@ -369,15 +375,15 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
                 if data["forecasts"][i]["parts"]["day"]["temp_max"] > 0:
                     max_temp.setText("+" + str(data["forecasts"][i]["parts"]["day"]["temp_max"]))
-                elif data["forecasts"][i]["parts"]["day"]["temp_max"] < 0:
-                    max_temp.setText("-" + str(data["forecasts"][i]["parts"]["day"]["temp_max"]))
+                elif int(data["forecasts"][i]["parts"]["day"]["temp_max"]) < 0:
+                    max_temp.setText(str(data["forecasts"][i]["parts"]["day"]["temp_max"]))
                 else:
                     max_temp.setText(str(data["forecasts"][i]["parts"]["day"]["temp_max"]))
 
                 if data["forecasts"][i]["parts"]["day"]["temp_min"] > 0:
                     min_temp.setText("+" + str(data["forecasts"][i]["parts"]["night"]["temp_min"]))
-                elif data["forecasts"][i]["parts"]["day"]["temp_min"] < 0:
-                    min_temp.setText("-" + str(data["forecasts"][i]["parts"]["night"]["temp_min"]))
+                elif int(data["forecasts"][i]["parts"]["day"]["temp_min"]) < 0:
+                    min_temp.setText(str(data["forecasts"][i]["parts"]["night"]["temp_min"]))
                 else:
                     min_temp.setText(str(data["forecasts"][i]["parts"]["night"]["temp_min"]))
 
@@ -402,7 +408,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 hour = QLabel()
                 hour.setMaximumSize(128, 40)
                 hour.setMinimumSize(128, 40)
-                hour.setStyleSheet("background-color: rgba(255, 255, 255, 100);\nborder: none;\nborder-radius: 15px;")
+                hour.setStyleSheet("background-color: rgba(255, 255, 255, 100);\nborder: none;\nborder-radius: 15px; font-size: 20px;")
+                hour.setAlignment(Qt.AlignCenter)
                 layout = QVBoxLayout()
                 widget = QWidget()
                 widget.setLayout(layout)
@@ -410,12 +417,14 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 img = QLabel()
                 img.setMinimumSize(128, 128)
                 img.setMaximumSize(128, 128)
-                img.setStyleSheet('background-color: rgba(255, 255, 255, 100);\nborder: none;\nborder-radius: 15px;')
+                img.setStyleSheet('background-color: rgba(255, 255, 255, 100);\nborder: none;\nborder-radius: 15px; font-size: 15px;')
+                img.setAlignment(Qt.AlignCenter)
 
                 temp = QLabel()
                 temp.setMaximumSize(128, 40)
                 temp.setMinimumSize(128, 40)
-                temp.setStyleSheet("background-color: rgba(255, 255, 255, 100);\nborder: none;\nborder-radius: 15px;")
+                temp.setStyleSheet("background-color: rgba(255, 255, 255, 100);\nborder: none;\nborder-radius: 15px; font-size: 15px;")
+                temp.setAlignment(Qt.AlignCenter)
 
                 if current_hour + i <= 23:
                     hour.setText(f'{str(data["forecasts"][0]["hours"][current_hour + i]["hour"]).zfill(2)}:00')
@@ -423,8 +432,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
                     if data["forecasts"][0]["hours"][current_hour + i]["temp"] > 0:
                         temp.setText("+" + str(data["forecasts"][0]["hours"][current_hour + i]["temp"]))
-                    elif data["forecasts"][0]["hours"][current_hour + i]["hour"] < 0:
-                        temp.setText("-" + str(data["forecasts"][0]["hours"][current_hour + i]["temp"]))
+                    elif int(data["forecasts"][0]["hours"][current_hour + i]["hour"]) < 0:
+                        temp.setText(str(data["forecasts"][0]["hours"][current_hour + i]["temp"]))
                     else:
                         temp.setText(str(data["forecasts"][0]["hours"][current_hour + i]["temp"]))
                 else:
@@ -433,8 +442,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
                     if data["forecasts"][1]["hours"][(current_hour + i) % 24]["temp"] > 0:
                         temp.setText("+" + str(data["forecasts"][1]["hours"][(current_hour + i) % 24]["temp"]))
-                    elif data["forecasts"][1]["hours"][(current_hour + i) % 24]["hour"] < 0:
-                        temp.setText("-" + str(data["forecasts"][1]["hours"][(current_hour + i) % 24]["temp"]))
+                    elif int(data["forecasts"][1]["hours"][(current_hour + i) % 24]["hour"]) < 0:
+                        temp.setText(str(data["forecasts"][1]["hours"][(current_hour + i) % 24]["temp"]))
                     else:
                         temp.setText(str(data["forecasts"][1]["hours"][(current_hour + i) % 24]["temp"]))
 
@@ -451,8 +460,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
             if data["forecasts"][0]["hours"][current_hour]["temp"] > 0:
                 self.now_temp_2.setText("+" + str(data["forecasts"][0]["hours"][current_hour]["temp"]))
-            elif data["forecasts"][0]["hours"][current_hour]["hour"] < 0:
-                self.now_temp_2.setText("-" + str(data["forecasts"][0]["hours"][current_hour]["temp"]))
+            elif int(data["forecasts"][0]["hours"][current_hour]["hour"]) < 0:
+                self.now_temp_2.setText(str(data["forecasts"][0]["hours"][current_hour]["temp"]))
             else:
                 self.now_temp_2.setText(str(data["forecasts"][0]["hours"][current_hour]["temp"]))
             # =======================================================================================
@@ -460,15 +469,15 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
             if data["forecasts"][0]["parts"]["day"]["temp_max"] > 0:
                 s += '+' + f'{data["forecasts"][0]["parts"]["day"]["temp_max"]}' + '/'
-            elif data["forecasts"][0]["parts"]["day"]["temp_max"] < 0:
-                s += '-' + f'{data["forecasts"][0]["parts"]["day"]["temp_max"]}' + '/'
+            elif int(data["forecasts"][0]["parts"]["day"]["temp_max"]) < 0:
+                s += f'{data["forecasts"][0]["parts"]["day"]["temp_max"]}' + '/'
             else:
                 s += f'{data["forecasts"][0]["parts"]["day"]["temp_max"]}' + '/'
 
             if data["forecasts"][0]["parts"]["night"]["temp_min"] > 0:
                 s += '+' + f'{data["forecasts"][0]["parts"]["night"]["temp_min"]}'
-            elif data["forecasts"][0]["parts"]["night"]["temp_min"] < 0:
-                s += '-' + f'{data["forecasts"][0]["parts"]["night"]["temp_min"]}'
+            elif int(data["forecasts"][0]["parts"]["night"]["temp_min"]) < 0:
+                s += f'{data["forecasts"][0]["parts"]["night"]["temp_min"]}'
             else:
                 s += f'{data["forecasts"][0]["parts"]["night"]["temp_min"]}'
 
@@ -476,7 +485,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
             self.img_now_2.setPixmap(QPixmap(icons_256[data["forecasts"][0]["hours"][current_hour]["icon"]]))
 
-            self.description_2.setText(f'{data["forecasts"][0]["hours"][current_hour]["condition"]}')
+            self.description_2.setText(f'{weather_tr[data["forecasts"][0]["hours"][current_hour]["condition"]]}')
 
             self.label_130.setText(
                 f'{data["forecasts"][0]["hours"][current_hour]["wind_dir"]} {data["forecasts"][0]["hours"][current_hour]["wind_speed"]}м/с')
@@ -493,9 +502,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             with open('favorite.txt', 'r', encoding='utf8') as f:
                 data = set([line.strip() for line in f])
 
-            print(name in data)
-            print(name)
-
             if name in data:
                 self.favorite_2.setIcon(QIcon('icons/free-icon-bookmark-3983855.png'))
             else:
@@ -505,12 +511,62 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.statusBar().showMessage("Некорректный ввод")
             self.statusBar().setStyleSheet('background-color: rgba(255, 255, 255, 100); font-size: 20px;')
 
-    def profile_page_f(self):
+    def settings_page_f(self):
         self.stackedWidget.setCurrentIndex(3)
         self.homeb.setStyleSheet("background-color: rgba(255, 255, 255, 0);\nborder: none;\nborder-radius: 15px;")
         self.searchb.setStyleSheet("background-color: rgba(255, 255, 255, 0);\nborder: none;\nborder-radius: 15px;")
         self.profileb.setStyleSheet("background-color: rgba(255, 255, 255, 100);\nborder: none;\nborder-radius: 15px;")
         self.statusBar().hide()
+
+        with QSignalBlocker(self.choose_city):
+            self.choose_city.clear()
+
+            self.default_city.setText(f"По умолчанию {self.last_city}")
+
+            data_for_ch = []
+
+            with open('favorite.txt', 'r', encoding='utf8') as f:
+                data = set([line.strip() for line in f])
+
+                for city in data:
+                    data_for_ch.append(city)
+                data_for_ch.pop(data_for_ch.index(self.last_city))
+
+            self.choose_city.addItems(data_for_ch)
+
+        main_widget = QWidget()
+        main_layout = QVBoxLayout()
+        main_widget.setLayout(main_layout)
+
+        for c in sorted(data):
+            widget = QWidget()
+            layout = QHBoxLayout()
+            widget.setLayout(layout)
+            button = QPushButton()
+            button.setText(c)
+            button.setStyleSheet("background-color: rgba(255, 255, 255, 100);\nborder: none;\nborder-radius: 15px; font-size: 26px;")
+            button.setMinimumSize(630, 100)
+            button.clicked.connect(lambda checked, city=c: self.on_button_clicked(city))
+            layout.addWidget(button)
+            main_layout.addWidget(widget)
+
+        self.my_cities.setWidget(main_widget)
+
+    def on_button_clicked(self, city):
+        self.search_city_v = city
+        self.check_city_f()
+
+    def on_combo_box_changed(self, index):
+        selected_item = self.choose_city.currentText()
+        print(selected_item)
+
+        default_city_text = self.default_city.text().replace("По умолчанию ", "")
+        if selected_item != default_city_text:
+            self.last_city = selected_item
+
+            self.default_city.setText(f"По умолчанию {self.last_city}")
+            with open('last_city', 'w', encoding='utf8') as f:
+                f.write(self.last_city)
 
     def mousePressEvent(self, event):
         if event.button() == Qt.LeftButton:
@@ -524,6 +580,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             # Координаты
             x1_, y1_ = 620, 40  # Пример координат левого верхнего угла области
             x2_, y2_ = 620 + 641, 40 + 241  # Пример координат правого нижнего угла области
+
+            # Координаты
+            x1__, y1__ = 590, 140  # Пример координат левого верхнего угла области
+            x2__, y2__ = 590 + 641, 140 + 341  # Пример координат правого нижнего угла области
 
             if (x1 <= event.x() <= x2 and y1 <= event.y() <= y2):
                 self.inside_area_future = True
@@ -589,5 +649,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 if __name__ == "__main__":
     app = QApplication(sys.argv)
     ex = MainWindow()
+    ex.setFixedSize(1280, 716)
     ex.show()
     sys.exit(app.exec_())
