@@ -24,7 +24,8 @@ weather_to_img = {
     "Небольшой снег": ["256/day_snow.png", "100/day_snow.png"],
     "Небольшой дождь": ["256/rain.png", "100/rain.png"],
     "Ясно, переменная облачность": ["256/day_clear.png", "100/day_clear.png"],
-    "Снегопад": ["256/day_snow.png", "100/day_snow.png"]
+    "Снегопад": ["256/day_snow.png", "100/day_snow.png"],
+    "Местами солнечно": ["256/day_snow.png", "100/day_snow.png"],
 }
 
 
