@@ -15,3 +15,5 @@ setup(
     options={"build_exe": build_exe_options},
     executables=[Executable("main.py", base=base)]
 )
+
+# Файл для создания .exe проекта запускается командой python build_exe.py build

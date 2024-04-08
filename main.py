@@ -1,3 +1,4 @@
+# Импорт библиотек
 import datetime
 import sys
 from PyQt5 import QtCore, uic
@@ -13,9 +14,11 @@ from main_design import Ui_MainWindow
 from current_city import get_current_city, get_current_city_coords
 from weather_dict import weather_tr
 
+# Подключение к БД
 connection = sqlite3.connect('cities.db')
 cur = connection.cursor()
 
+# Чтение избранных городов
 with open('favorite.txt', encoding='utf8') as f:
     data_f = f.readlines()
     if len(data_f) == 0:
@@ -23,8 +26,10 @@ with open('favorite.txt', encoding='utf8') as f:
         open('favorite.txt', 'w', encoding='utf8').write(initial_city)
 
 
+# Главный класс приложения
 class MainWindow(QMainWindow, Ui_MainWindow):
     def __init__(self):
+        # Инициализация класса
         super().__init__()
         self.setupUi(self)
 
@@ -42,10 +47,13 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         self.initUI()
 
+    # Значение поиска (ввод пользователя)
     def on_text_changed(self, text):
         self.search_city_v = text
 
+    # Действия при запуске
     def initUI(self):
+        # Обозначение команд кнопок
         self.homeb.clicked.connect(self.home_page_f)
         self.searchb.clicked.connect(self.search_page_f)
         self.profileb.clicked.connect(self.settings_page_f)
@@ -53,9 +61,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.favorite_2.clicked.connect(self.do_favorite_2)
         self.stackedWidget.setStyleSheet("background-color: rgba(255, 255, 255, 0)")
 
-        self.home_page_f()
+        self.home_page_f() # Переход на главную страницу
 
-    def do_favorite(self):
+    def do_favorite(self): # Сделать город избранным
         name = self.city.text()
 
         with open('favorite.txt', 'r', encoding='utf8') as f:
@@ -72,7 +80,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             for value in data:
                 f.write(f'{value}\n')
 
-    def do_favorite_2(self):
+    def do_favorite_2(self): # Сделать город избранным в поиске
         name = self.city_2.text()
 
         with open('favorite.txt', 'r', encoding='utf8') as f:
@@ -89,9 +97,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             for value in data:
                 f.write(f'{value}\n')
 
-    # сделать, чтобы оно робило, такое же для поиска и остаётся только настройки, но они вроде изи)
 
-    def home_page_f(self):
+    def home_page_f(self): # Главная страница приложения
         self.stackedWidget.setCurrentIndex(0)
         self.homeb.setStyleSheet("background-color: rgba(255, 255, 255, 100);\nborder: none;\nborder-radius: 15px;")
         self.searchb.setStyleSheet("background-color: rgba(255, 255, 255, 0);\nborder: none;\nborder-radius: 15px;")
@@ -115,6 +122,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         main_widget_future = QWidget()
         main_widget_future.setLayout(main_layout_future)
 
+        # Добавление погоды в будущие дни
         for i in range(0, 7):
             name = QLabel()
             name.setMaximumSize(128, 40)
@@ -189,6 +197,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         main_widget_hours = QWidget()
         main_widget_hours.setLayout(main_layout_hours)
 
+        # Добавление погоды в будущие 24 часа
         for i in range(0, 25):
             hour = QLabel()
             hour.setMaximumSize(128, 40)
@@ -292,27 +301,27 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         else:
             self.favorite.setIcon(QIcon('icons/free-icon-bookmark-3983871.png'))
 
-    def search_page_f(self):
+    def search_page_f(self): # Страница дял поиска
         self.stackedWidget.setCurrentIndex(1)
         self.homeb.setStyleSheet("background-color: rgba(255, 255, 255, 0);\nborder: none;\nborder-radius: 15px;")
         self.searchb.setStyleSheet("background-color: rgba(255, 255, 255, 100);\nborder: none;\nborder-radius: 15px;")
         self.profileb.setStyleSheet("background-color: rgba(255, 255, 255, 0);\nborder: none;\nborder-radius: 15px;")
         self.statusBar().hide()
 
-        cities = [x[0] for x in list(cur.execute("SELECT Город FROM city").fetchall())]
+        cities = [x[0] for x in list(cur.execute("SELECT Город FROM city").fetchall())] # Все города
 
-        completer = QCompleter(cities, self)
-        completer.setCaseSensitivity(QtCore.Qt.CaseInsensitive)
+        completer = QCompleter(cities, self) # Сетод для подсказок пользователю
+        completer.setCaseSensitivity(QtCore.Qt.CaseInsensitive) # не зависит от регистра
 
-        self.search_le.setCompleter(completer)
+        self.search_le.setCompleter(completer) # добавляем его в строкук поиска
 
-        popup = completer.popup()
+        popup = completer.popup() # стилизуем
         popup.setStyleSheet("background-color: rgba(255, 255, 255, 100); color: black; font-size: 26px;")
 
         city = self.search_le.text()
-        self.search_city_v = city
+        self.search_city_v = city # изменям текст атрибута
 
-    def check_city_f(self):
+    def check_city_f(self): # Страница для просмотра города в режиме поиска
         if self.search_city_v != "" and self.search_city_v.lower() in [str(x[0]).lower() for x in list(cur.execute(
                 "SELECT Город FROM city").fetchall())]:
             self.statusBar().hide()
@@ -328,6 +337,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             main_widget_future = QWidget()
             main_widget_future.setLayout(main_layout_future)
 
+            # Добавление погоды в следующие дни
             for i in range(0, 7):
                 name = QLabel()
                 name.setMaximumSize(128, 40)
@@ -404,6 +414,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             main_widget_hours = QWidget()
             main_widget_hours.setLayout(main_layout_hours)
 
+            # Добавление погоды в будущие часы
             for i in range(0, 25):
                 hour = QLabel()
                 hour.setMaximumSize(128, 40)
@@ -511,20 +522,21 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.statusBar().showMessage("Некорректный ввод")
             self.statusBar().setStyleSheet('background-color: rgba(255, 255, 255, 100); font-size: 20px;')
 
-    def settings_page_f(self):
+    def settings_page_f(self): # Страница с настройками
         self.stackedWidget.setCurrentIndex(3)
         self.homeb.setStyleSheet("background-color: rgba(255, 255, 255, 0);\nborder: none;\nborder-radius: 15px;")
         self.searchb.setStyleSheet("background-color: rgba(255, 255, 255, 0);\nborder: none;\nborder-radius: 15px;")
         self.profileb.setStyleSheet("background-color: rgba(255, 255, 255, 100);\nborder: none;\nborder-radius: 15px;")
         self.statusBar().hide()
 
-        with QSignalBlocker(self.choose_city):
-            self.choose_city.clear()
+        with QSignalBlocker(self.choose_city): # При выполнении следующих действий сигналы отключены
+            self.choose_city.clear() # очистка городов для выбора
 
-            self.default_city.setText(f"По умолчанию {self.last_city}")
+            self.default_city.setText(f"По умолчанию {self.last_city}") # Надпись с городом по умолчанию
 
             data_for_ch = []
 
+            # Добавление городов, которые можно выбрать как город по умолчанию
             with open('favorite.txt', 'r', encoding='utf8') as f:
                 data = set([line.strip() for line in f])
 
@@ -552,11 +564,11 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         self.my_cities.setWidget(main_widget)
 
-    def on_button_clicked(self, city):
+    def on_button_clicked(self, city): # Просмотр города из списка пользователей
         self.search_city_v = city
         self.check_city_f()
 
-    def on_combo_box_changed(self, index):
+    def on_combo_box_changed(self, index): # Изменение города по умолчанию
         selected_item = self.choose_city.currentText()
         print(selected_item)
 
@@ -568,7 +580,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             with open('last_city', 'w', encoding='utf8') as f:
                 f.write(self.last_city)
 
-    def mousePressEvent(self, event):
+    def mousePressEvent(self, event): # Следующие три метода отвечают за скроллинг погоды в специальных окошках
         if event.button() == Qt.LeftButton:
             self.mouse_pressed = True
             self.last_pos = event.pos()
@@ -646,9 +658,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 self.last_pos = event.pos()
 
 
-if __name__ == "__main__":
+# Запуск приложения
+if __name__ == "__main__": # Если запускают именно из этого файла
     app = QApplication(sys.argv)
     ex = MainWindow()
-    ex.setFixedSize(1280, 716)
+    ex.setFixedSize(1280, 716) # Фиксированное разрешение
     ex.show()
     sys.exit(app.exec_())
